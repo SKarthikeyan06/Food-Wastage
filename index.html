@@ -1435,8 +1435,7 @@
         const r = await api('/login', { email, password: pass });
         if (r.error) { toast(r.error, 'err'); }
         else { currentUser = r.user; initApp(); }
-      } catch (e) { toast('Backend not running - using demo mode', 'err'); //demoLogin(email); Console.log(e);
-                  }
+      } catch (e) { toast('Backend not running - using demo mode', 'err'); demoLogin(email); }
       btn.innerHTML = 'Login'; btn.disabled = false;
     }
 
@@ -1517,7 +1516,7 @@
           </div>`;
       resultDiv.style.display = 'block';
 
-      btn.innerHTML = '🆘 Send Alert to Nearest NGOs'; btn.disabled = false;
+      btn.innerHTML = 'Send Alert to Nearest NGOs'; btn.disabled = false;
       toast('Alert sent to nearby NGOs!');
     }
 
@@ -1639,11 +1638,24 @@
     </div>`;
     }
 
+    function toggleSidebar() {
+      const sb = document.getElementById('sidebar');
+      const overlay = document.getElementById('sidebar-overlay');
+      if (sb) sb.classList.toggle('open');
+      if (overlay) overlay.classList.toggle('open');
+    }
+
     function showSection(id) {
       currentSection = id;
       document.querySelectorAll('.sidebar-btn').forEach(b => b.classList.remove('active'));
       const sb = document.getElementById('sb-' + id);
       if (sb) sb.classList.add('active');
+
+      const sidebar = document.getElementById('sidebar');
+      const overlay = document.getElementById('sidebar-overlay');
+      if (sidebar) sidebar.classList.remove('open');
+      if (overlay) overlay.classList.remove('open');
+
       const fn = {
         'predict': renderPredict,
         'confirm': renderConfirm,
@@ -2419,7 +2431,7 @@
     ${ngos}
   </div>`;
       document.getElementById('rn2-result').classList.remove('hidden');
-      btn.innerHTML = '🆘 Send Alert to Nearest NGOs'; btn.disabled = false;
+      btn.innerHTML = 'Send Alert to Nearest NGOs'; btn.disabled = false;
       toast('Alert sent to NGOs!');
     }
 
