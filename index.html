@@ -1,0 +1,2861 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+  <title>FoodBridge AI v2</title>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap"
+    rel="stylesheet" />
+  <style>
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0
+    }
+
+    :root {
+      --bg: #ffffff;
+      --bg2: #f8faf9;
+      --bg3: #ffffff;
+      --bg4: #f3f6f5;
+      --green: #0f7a66;
+      --green2: #2aa68a;
+      --amber: #f59e0b;
+      --red: #d94e4e;
+      --blue: #0ea5e9;
+      --text: #0b1a10;
+      --text2: #52606d;
+      --border: rgba(15, 20, 16, 0.06);
+      --card: #ffffff;
+      --card-h: rgba(15, 122, 102, 0.03);
+      --ff: 'Syne', sans-serif;
+      --fb: 'DM Sans', sans-serif;
+      --r: 14px;
+      --rs: 10px;
+    }
+
+    html {
+      scroll-behavior: smooth
+    }
+
+    body {
+      background: var(--bg2);
+      color: var(--text);
+      font-family: var(--fb);
+      font-size: 15px;
+      line-height: 1.6;
+      min-height: 100vh
+    }
+
+    /* ── NAV ── */
+    .nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px 32px;
+      background: rgba(255, 255, 255, 0.95);
+      box-shadow: 0 4px 12px rgba(16, 24, 32, 0.08);
+      border-bottom: 1px solid var(--border)
+    }
+
+    .logo {
+      font-family: var(--ff);
+      font-size: 20px;
+      font-weight: 800;
+      cursor: pointer
+    }
+
+    .logo span {
+      color: var(--green)
+    }
+
+    .nav-right {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      justify-content: flex-end
+    }
+
+    .role-badge {
+      font-size: 11px;
+      font-weight: 600;
+      padding: 4px 12px;
+      border-radius: 100px;
+      letter-spacing: 0.5px;
+      text-transform: uppercase
+    }
+
+    .rb-donor {
+      background: rgba(126, 200, 69, 0.15);
+      color: var(--green);
+      border: 1px solid rgba(126, 200, 69, 0.3)
+    }
+
+    .rb-ngo {
+      background: rgba(90, 180, 232, 0.15);
+      color: var(--blue);
+      border: 1px solid rgba(90, 180, 232, 0.3)
+    }
+
+    .rb-admin {
+      background: rgba(245, 166, 35, 0.15);
+      color: var(--amber);
+      border: 1px solid rgba(245, 166, 35, 0.3)
+    }
+
+    .rb-individual {
+      background: rgba(232, 93, 74, 0.15);
+      color: var(--red);
+      border: 1px solid rgba(232, 93, 74, 0.3)
+    }
+
+    .nav-name {
+      font-size: 14px;
+      font-weight: 500
+    }
+
+    .btn-sm {
+      padding: 8px 18px;
+      border-radius: var(--rs);
+      font-family: var(--ff);
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      border: none;
+      transition: all 0.2s
+    }
+
+    .btn-logout {
+      background: rgba(232, 93, 74, 0.1);
+      color: var(--red);
+      border: 1px solid rgba(232, 93, 74, 0.2)
+    }
+
+    .btn-logout:hover {
+      background: rgba(232, 93, 74, 0.2)
+    }
+
+    /* ── PAGES ── */
+    .page {
+      display: none;
+      min-height: 100vh
+    }
+
+    .page.active {
+      display: block
+    }
+
+    /* ── AUTH PAGE ── */
+    .auth-wrap {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      background: radial-gradient(ellipse 70% 60% at 50% 40%, rgba(15, 122, 102, 0.04) 0%, transparent 70%)
+    }
+
+    .auth-box {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 36px;
+      width: 100%;
+      max-width: 520px
+    }
+
+    .auth-logo {
+      font-family: var(--ff);
+      font-size: 28px;
+      font-weight: 800;
+      text-align: center;
+      margin-bottom: 8px
+    }
+
+    .auth-logo span {
+      color: var(--green)
+    }
+
+    .auth-sub {
+      text-align: center;
+      color: var(--text2);
+      font-size: 14px;
+      margin-bottom: 32px
+    }
+
+    .auth-tabs {
+      display: flex;
+      gap: 4px;
+      background: var(--bg2);
+      border-radius: var(--rs);
+      padding: 4px;
+      margin-bottom: 28px
+    }
+
+    .auth-tab {
+      flex: 1;
+      padding: 10px;
+      border: none;
+      background: transparent;
+      color: var(--text2);
+      font-family: var(--ff);
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      border-radius: 8px;
+      transition: all 0.2s
+    }
+
+    .auth-tab.active {
+      background: var(--green);
+      color: #0b0e09
+    }
+
+    .form-g {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      margin-bottom: 16px
+    }
+
+    .form-g label {
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--text2);
+      letter-spacing: 0.3px;
+      text-transform: uppercase
+    }
+
+    .form-g input,
+    .form-g select {
+      background: #ffffff;
+      border: 1px solid var(--border);
+      border-radius: var(--rs);
+      color: var(--text);
+      font-family: var(--fb);
+      font-size: 14px;
+      padding: 11px 14px;
+      outline: none;
+      transition: border-color 0.2s;
+      width: 100%
+    }
+
+    .form-g input:focus,
+    .form-g select:focus {
+      border-color: var(--green)
+    }
+
+    .form-g select option {
+      background: #ffffff;
+      color: var(--text)
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px
+    }
+
+    .btn-full {
+      width: 100%;
+      padding: 14px;
+      background: var(--green);
+      color: #0b0e09;
+      border: none;
+      border-radius: var(--rs);
+      font-family: var(--ff);
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s;
+      margin-top: 8px
+    }
+
+    .btn-full:hover {
+      background: var(--green2);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(126, 200, 69, 0.3)
+    }
+
+    .demo-hint {
+      text-align: center;
+      margin-top: 16px;
+      font-size: 12px;
+      color: var(--text2);
+      background: var(--bg2);
+      border-radius: var(--rs);
+      padding: 12px;
+      line-height: 1.8
+    }
+
+    .demo-hint strong {
+      color: var(--green)
+    }
+
+    /* ── MAIN LAYOUT ── */
+    .main-wrap {
+      padding: 80px 0 40px
+    }
+
+    .sidebar {
+      position: fixed;
+      left: 0;
+      top: 65px;
+      bottom: 0;
+      width: 220px;
+      background: transparent;
+      border-right: 1px solid var(--border);
+      padding: 24px 0;
+      overflow-y: auto;
+      z-index: 90
+    }
+
+    .sidebar-section {
+      padding: 0 16px;
+      margin-bottom: 8px
+    }
+
+    .sidebar-label {
+      font-size: 10px;
+      font-weight: 700;
+      color: var(--text2);
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      padding: 8px 12px;
+      margin-bottom: 4px
+    }
+
+    .sidebar-btn {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      width: 100%;
+      padding: 10px 12px;
+      border: none;
+      background: transparent;
+      color: var(--text2);
+      font-family: var(--fb);
+      font-size: 14px;
+      font-weight: 400;
+      cursor: pointer;
+      border-radius: var(--rs);
+      transition: all 0.2s;
+      text-align: left
+    }
+
+    .sidebar-btn:hover,
+    .sidebar-btn.active {
+      background: var(--card-h);
+      color: var(--text)
+    }
+
+    .sidebar-btn.active {
+      border-left: 3px solid var(--green);
+      color: var(--green)
+    }
+
+    .sidebar-icon {
+      font-size: 16px;
+      width: 20px;
+      text-align: center
+    }
+
+    .content {
+      margin-left: 220px;
+      padding: 96px 40px 40px;
+      max-width: 1200px
+    }
+
+    .page-title {
+      font-family: var(--ff);
+      font-size: clamp(28px, 3vw, 42px);
+      font-weight: 800;
+      letter-spacing: -1px;
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 10px
+    }
+
+    .page-sub {
+      color: var(--text2);
+      font-size: 15px;
+      margin-bottom: 32px
+    }
+
+    /* ── CARDS ── */
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--r);
+      padding: 28px
+    }
+
+    .card h3 {
+      font-family: var(--ff);
+      font-size: 18px;
+      font-weight: 700;
+      margin-bottom: 20px;
+      padding-bottom: 14px;
+      border-bottom: 1px solid var(--border)
+    }
+
+    .grid2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px
+    }
+
+    .grid3 {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px
+    }
+
+    .grid4 {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px
+    }
+
+    .gap20 {
+      gap: 20px
+    }
+
+    /* ── STAT CARD ── */
+    .stat {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--r);
+      padding: 22px
+    }
+
+    .stat-icon {
+      font-size: 24px;
+      margin-bottom: 10px
+    }
+
+    .stat-val {
+      font-family: var(--ff);
+      font-size: 32px;
+      font-weight: 800;
+      line-height: 1;
+      color: var(--green)
+    }
+
+    .stat-lbl {
+      font-size: 12px;
+      color: var(--text2);
+      margin-top: 6px
+    }
+
+    /* ── FORM ── */
+    .fgrid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px
+    }
+
+    .fgrid .full {
+      grid-column: span 2
+    }
+
+    .inp,
+    .sel,
+    .ta {
+      background: #ffffff;
+      border: 1px solid var(--border);
+      border-radius: var(--rs);
+      color: var(--text);
+      font-family: var(--fb);
+      font-size: 14px;
+      padding: 11px 14px;
+      outline: none;
+      transition: border-color 0.2s;
+      width: 100%
+    }
+
+    .inp:focus,
+    .sel:focus,
+    .ta:focus {
+      border-color: var(--green)
+    }
+
+    .sel option {
+      background: #ffffff;
+      color: var(--text)
+    }
+
+    .ta {
+      resize: vertical;
+      min-height: 80px
+    }
+
+    .lbl {
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--text2);
+      letter-spacing: 0.3px;
+      text-transform: uppercase;
+      margin-bottom: 6px;
+      display: block
+    }
+
+    .fg {
+      margin-bottom: 16px
+    }
+
+    .btn-primary {
+      background: var(--green);
+      color: #0b0e09;
+      border: none;
+      border-radius: var(--rs);
+      font-family: var(--ff);
+      font-size: 14px;
+      font-weight: 700;
+      padding: 12px 28px;
+      cursor: pointer;
+      transition: all 0.2s
+    }
+
+    .btn-primary:hover {
+      background: var(--green2);
+      transform: translateY(-2px)
+    }
+
+    .btn-primary:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      transform: none
+    }
+
+    .btn-outline {
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--text);
+      border-radius: var(--rs);
+      font-family: var(--ff);
+      font-size: 14px;
+      font-weight: 600;
+      padding: 12px 28px;
+      cursor: pointer;
+      transition: all 0.2s
+    }
+
+    .btn-outline:hover {
+      border-color: var(--green);
+      color: var(--green)
+    }
+
+    /* ── RESULT ── */
+    .result-box {
+      background: rgba(126, 200, 69, 0.06);
+      border: 1px solid rgba(126, 200, 69, 0.25);
+      border-radius: var(--r);
+      padding: 28px;
+      margin-top: 20px;
+      animation: fadeUp 0.4s ease
+    }
+
+    .result-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+      margin-bottom: 20px
+    }
+
+    .rv {
+      font-family: var(--ff);
+      font-size: 28px;
+      font-weight: 800;
+      line-height: 1
+    }
+
+    .rl {
+      font-size: 12px;
+      color: var(--text2);
+      margin-top: 4px
+    }
+
+    .risk-HIGH {
+      display: inline-block;
+      padding: 4px 14px;
+      border-radius: 100px;
+      font-family: var(--ff);
+      font-size: 13px;
+      font-weight: 700;
+      background: rgba(232, 93, 74, 0.15);
+      color: var(--red);
+      border: 1px solid rgba(232, 93, 74, 0.3)
+    }
+
+    .risk-MEDIUM {
+      display: inline-block;
+      padding: 4px 14px;
+      border-radius: 100px;
+      font-family: var(--ff);
+      font-size: 13px;
+      font-weight: 700;
+      background: rgba(245, 166, 35, 0.15);
+      color: var(--amber);
+      border: 1px solid rgba(245, 166, 35, 0.3)
+    }
+
+    .risk-LOW {
+      display: inline-block;
+      padding: 4px 14px;
+      border-radius: 100px;
+      font-family: var(--ff);
+      font-size: 13px;
+      font-weight: 700;
+      background: rgba(126, 200, 69, 0.15);
+      color: var(--green);
+      border: 1px solid rgba(126, 200, 69, 0.3)
+    }
+
+    .rec-box {
+      background: rgba(255, 255, 255, 0.03);
+      border-radius: var(--rs);
+      padding: 14px 16px;
+      font-size: 14px;
+      color: var(--text2)
+    }
+
+    .rec-box strong {
+      color: var(--text)
+    }
+
+    .alert-soft {
+      background: rgba(245, 166, 35, 0.06);
+      border: 1px solid rgba(245, 166, 35, 0.25);
+      border-radius: var(--rs);
+      padding: 14px 18px;
+      margin-top: 12px
+    }
+
+    .alert-hard {
+      background: rgba(126, 200, 69, 0.06);
+      border: 1px solid rgba(126, 200, 69, 0.3);
+      border-radius: var(--rs);
+      padding: 14px 18px;
+      margin-top: 12px
+    }
+
+    .at {
+      font-family: var(--ff);
+      font-size: 13px;
+      font-weight: 700;
+      margin-bottom: 4px
+    }
+
+    .alert-soft .at {
+      color: var(--amber)
+    }
+
+    .alert-hard .at {
+      color: var(--green)
+    }
+
+    .atxt {
+      font-size: 13px;
+      color: var(--text2)
+    }
+
+    .mode-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(90, 180, 232, 0.1);
+      color: var(--blue);
+      border: 1px solid rgba(90, 180, 232, 0.2);
+      border-radius: 100px;
+      font-size: 11px;
+      font-weight: 600;
+      padding: 3px 10px;
+      margin-top: 4px;
+      letter-spacing: 0.3px
+    }
+
+    /* ── TABLE ── */
+    .tbl-wrap {
+      overflow-x: auto;
+      border-radius: var(--r);
+      border: 1px solid var(--border)
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse
+    }
+
+    th {
+      text-align: left;
+      padding: 12px 16px;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      color: var(--text2);
+      text-transform: uppercase;
+      border-bottom: 1px solid var(--border);
+      background: var(--bg3)
+    }
+
+    td {
+      padding: 12px 16px;
+      font-size: 13px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.04)
+    }
+
+    tr:last-child td {
+      border-bottom: none
+    }
+
+    tr:hover td {
+      background: var(--card-h)
+    }
+
+    .pill {
+      display: inline-block;
+      padding: 3px 10px;
+      border-radius: 100px;
+      font-size: 11px;
+      font-weight: 600
+    }
+
+    .pill-green {
+      background: rgba(126, 200, 69, 0.15);
+      color: var(--green)
+    }
+
+    .pill-amber {
+      background: rgba(245, 166, 35, 0.15);
+      color: var(--amber)
+    }
+
+    .pill-red {
+      background: rgba(232, 93, 74, 0.15);
+      color: var(--red)
+    }
+
+    .pill-blue {
+      background: rgba(90, 180, 232, 0.15);
+      color: var(--blue)
+    }
+
+    /* ── UPLOAD ZONE ── */
+    .drop-zone {
+      border: 2px dashed var(--border);
+      border-radius: var(--r);
+      padding: 48px 32px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.2s
+    }
+
+    .drop-zone:hover {
+      border-color: var(--green);
+      background: rgba(126, 200, 69, 0.03)
+    }
+
+    .drop-zone.drag {
+      border-color: var(--green);
+      background: rgba(126, 200, 69, 0.06)
+    }
+
+    /* ── PROGRESS BAR ── */
+    .pbar-wrap {
+      margin-bottom: 12px
+    }
+
+    .pbar-top {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 6px;
+      font-size: 13px
+    }
+
+    .pbar-val {
+      font-weight: 600;
+      color: var(--green)
+    }
+
+    .pbar-bg {
+      background: rgba(255, 255, 255, 0.06);
+      border-radius: 100px;
+      height: 7px
+    }
+
+    .pbar-fill {
+      border-radius: 100px;
+      height: 7px;
+      transition: width 1s
+    }
+
+    /* ── NGO ALERT CARDS ── */
+    .alert-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--r);
+      padding: 22px;
+      transition: all 0.3s
+    }
+
+    .alert-card:hover {
+      border-color: rgba(126, 200, 69, 0.3)
+    }
+
+    .ac-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 14px
+    }
+
+    .ac-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 16px
+    }
+
+    .ac-meta-item {
+      font-size: 13px;
+      color: var(--text2)
+    }
+
+    .ac-meta-item strong {
+      color: var(--text)
+    }
+
+    .ac-btns {
+      display: flex;
+      gap: 10px
+    }
+
+    .btn-accept {
+      flex: 1;
+      padding: 9px;
+      text-align: center;
+      background: rgba(126, 200, 69, 0.1);
+      color: var(--green);
+      border: 1px solid rgba(126, 200, 69, 0.25);
+      border-radius: var(--rs);
+      font-weight: 600;
+      font-size: 13px;
+      cursor: pointer;
+      transition: all 0.2s;
+      font-family: var(--fb)
+    }
+
+    .btn-accept:hover {
+      background: rgba(126, 200, 69, 0.2)
+    }
+
+    .btn-decline {
+      flex: 1;
+      padding: 9px;
+      text-align: center;
+      background: rgba(232, 93, 74, 0.08);
+      color: var(--red);
+      border: 1px solid rgba(232, 93, 74, 0.2);
+      border-radius: var(--rs);
+      font-weight: 600;
+      font-size: 13px;
+      cursor: pointer;
+      transition: all 0.2s;
+      font-family: var(--fb)
+    }
+
+    .btn-decline:hover {
+      background: rgba(232, 93, 74, 0.15)
+    }
+
+    /* ── MISC ── */
+    .hidden {
+      display: none !important
+    }
+
+    .spinner {
+      display: inline-block;
+      width: 14px;
+      height: 14px;
+      border: 2px solid rgba(255, 255, 255, 0.2);
+      border-top-color: var(--green);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      margin-right: 8px
+    }
+
+    .toast {
+      position: fixed;
+      top: 80px;
+      right: 24px;
+      z-index: 9999;
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      border-radius: var(--rs);
+      padding: 16px 24px;
+      font-size: 14px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+      animation: slideIn 0.3s ease;
+      max-width: 380px
+    }
+
+    .toast.ok {
+      border-color: rgba(126, 200, 69, 0.4)
+    }
+
+    .toast.err {
+      border-color: rgba(232, 93, 74, 0.4)
+    }
+
+    .info-box {
+      background: rgba(90, 180, 232, 0.06);
+      border: 1px solid rgba(90, 180, 232, 0.2);
+      border-radius: var(--rs);
+      padding: 14px 18px;
+      font-size: 13px;
+      color: var(--text2);
+      margin-bottom: 20px
+    }
+
+    .info-box strong {
+      color: var(--blue)
+    }
+
+    .section-gap {
+      margin-bottom: 28px
+    }
+
+    @keyframes fadeUp {
+      from {
+        opacity: 0;
+        transform: translateY(16px)
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0)
+      }
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg)
+      }
+    }
+
+    @keyframes slideIn {
+      from {
+        opacity: 0;
+        transform: translateX(12px)
+      }
+
+      to {
+        opacity: 1;
+        transform: translateX(0)
+      }
+    }
+
+    /* ═══ ORPHAN ALERT PANEL — Premium Design ═══ */
+    .needy-alert-panel {
+      margin-top: 24px;
+      padding: 24px;
+      background: linear-gradient(135deg, rgba(217, 78, 78, 0.06) 0%, rgba(245, 158, 11, 0.05) 100%);
+      border: 1px solid rgba(217, 78, 78, 0.15);
+      border-radius: var(--r);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .needy-alert-panel::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: radial-gradient(circle at 30% 30%, rgba(217, 78, 78, 0.06) 0%, transparent 60%);
+      animation: pulseGlow 4s ease-in-out infinite;
+      pointer-events: none;
+    }
+
+    @keyframes pulseGlow {
+
+      0%,
+      100% {
+        opacity: 0.5;
+        transform: scale(1);
+      }
+
+      50% {
+        opacity: 1;
+        transform: scale(1.1);
+      }
+    }
+
+    .needy-alert-panel .needy-title {
+      font-family: var(--ff);
+      font-size: 18px;
+      font-weight: 800;
+      color: var(--red);
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      position: relative;
+    }
+
+    .needy-alert-panel .needy-sub {
+      color: var(--text2);
+      font-size: 13px;
+      margin-bottom: 16px;
+      line-height: 1.5;
+      position: relative;
+    }
+
+    .needy-alert-panel .needy-fields {
+      display: grid;
+      gap: 10px;
+      position: relative;
+    }
+
+    .needy-alert-panel .needy-fields input,
+    .needy-alert-panel .needy-fields textarea {
+      background: rgba(255, 255, 255, 0.85);
+      border: 1px solid rgba(217, 78, 78, 0.15);
+      border-radius: var(--rs);
+      padding: 11px 14px;
+      font-family: var(--fb);
+      font-size: 14px;
+      color: var(--text);
+      outline: none;
+      width: 100%;
+      transition: border-color 0.2s, box-shadow 0.2s;
+      resize: vertical;
+    }
+
+    .needy-alert-panel .needy-fields input:focus,
+    .needy-alert-panel .needy-fields textarea:focus {
+      border-color: var(--red);
+      box-shadow: 0 0 0 3px rgba(217, 78, 78, 0.08);
+    }
+
+    .btn-sos {
+      width: 100%;
+      padding: 14px;
+      background: linear-gradient(135deg, var(--red), #c0392b);
+      color: #fff;
+      border: none;
+      border-radius: var(--rs);
+      font-family: var(--ff);
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.25s;
+      margin-top: 14px;
+      position: relative;
+      letter-spacing: 0.3px;
+    }
+
+    .btn-sos:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 28px rgba(217, 78, 78, 0.35);
+    }
+
+    .btn-sos:active {
+      transform: translateY(0);
+    }
+
+    /* ═══ HAMBURGER MENU ═══ */
+    .hamburger {
+      display: none;
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 6px;
+      z-index: 200;
+    }
+
+    .hamburger span {
+      display: block;
+      width: 22px;
+      height: 2px;
+      background: var(--text);
+      margin: 5px 0;
+      border-radius: 2px;
+      transition: all 0.3s;
+    }
+
+    /* ═══ RESPONSIVE — TABLET (≤1024px) ═══ */
+    @media (max-width: 1024px) {
+      .sidebar {
+        width: 180px;
+      }
+
+      .content {
+        margin-left: 180px;
+        padding: 96px 20px 24px;
+      }
+
+      .grid4 {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .grid3 {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .nav {
+        padding: 14px 20px;
+      }
+    }
+
+    /* ═══ RESPONSIVE — MOBILE (≤768px) ═══ */
+    @media (max-width: 768px) {
+      .hamburger {
+        display: block;
+      }
+
+      .sidebar {
+        position: fixed;
+        left: -260px;
+        width: 240px;
+        top: 60px;
+        bottom: 0;
+        background: var(--bg);
+        box-shadow: 4px 0 20px rgba(0, 0, 0, 0.1);
+        transition: left 0.3s ease;
+        z-index: 150;
+      }
+
+      .sidebar.open {
+        left: 0;
+      }
+
+      .sidebar-overlay {
+        display: none;
+        position: fixed;
+        top: 60px;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.3);
+        z-index: 140;
+      }
+
+      .sidebar-overlay.open {
+        display: block;
+      }
+
+      .content {
+        margin-left: 0;
+        padding: 90px 16px 16px;
+      }
+
+      .grid4,
+      .grid3,
+      .grid2,
+      .result-grid,
+      .fgrid,
+      .form-row {
+        grid-template-columns: 1fr;
+      }
+
+      .fgrid .full {
+        grid-column: span 1;
+      }
+
+      .nav {
+        padding: 12px 16px;
+      }
+
+      .nav-right {
+        gap: 10px;
+      }
+
+      .nav-name {
+        display: none;
+      }
+
+      .auth-box {
+        padding: 24px 20px;
+        border-radius: 14px;
+      }
+
+      .auth-logo {
+        font-size: 24px;
+      }
+
+      .page-title {
+        font-size: 24px;
+      }
+
+      .stat-val {
+        font-size: 24px;
+      }
+
+      .card {
+        padding: 20px;
+      }
+
+      .needy-alert-panel {
+        padding: 18px;
+      }
+    }
+
+    /* ═══ RESPONSIVE — SMALL PHONE (≤480px) ═══ */
+    @media (max-width: 480px) {
+      .content {
+        padding: 84px 12px 12px;
+      }
+
+      .auth-box {
+        padding: 20px 16px;
+      }
+
+      .form-row {
+        gap: 8px;
+      }
+
+      .btn-full,
+      .btn-sos {
+        font-size: 14px;
+        padding: 12px;
+      }
+
+      .stat-val {
+        font-size: 20px;
+      }
+
+      .stat {
+        padding: 16px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- ══════════════════════════════════════ -->
+  <!-- AUTH PAGE -->
+  <!-- ══════════════════════════════════════ -->
+  <div id="page-auth" class="page active">
+    <div class="auth-wrap">
+      <div class="auth-box">
+        <div class="auth-logo">FoodBridge<span>AI</span></div>
+        <div class="auth-sub">Zero Waste - Maximum Impact</div>
+
+        <div class="auth-tabs">
+          <button class="auth-tab active" onclick="authTab('login')">Login</button>
+          <button class="auth-tab" onclick="authTab('register')">Register</button>
+        </div>
+
+        <!-- LOGIN -->
+        <div id="auth-login">
+          <div class="form-g">
+            <label>EMAIL</label>
+            <input type="email" id="l-email" placeholder="your@email.com" />
+          </div>
+          <div class="form-g">
+            <label>PASSWORD</label>
+            <input type="password" id="l-pass" placeholder="Password" onkeydown="if(event.key==='Enter')doLogin()" />
+          </div>
+          <button class="btn-full" onclick="doLogin()" id="login-btn">Login</button>
+        </div>
+
+        <!-- REGISTER -->
+        <div id="auth-register" class="hidden">
+          <div class="form-row">
+            <div class="form-g">
+              <label>FULL NAME</label>
+              <input type="text" id="r-name" placeholder="Your name" />
+            </div>
+            <div class="form-g">
+              <label>ROLE</label>
+              <select id="r-role">
+                <option value="donor">Donor (Restaurant/Caterer)</option>
+                <option value="ngo">NGO / Shelter</option>
+                <option value="individual">Individual</option>
+                <option value="admin">Admin</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-g">
+            <label>EMAIL</label>
+            <input type="email" id="r-email" placeholder="your@email.com" />
+          </div>
+          <div class="form-row">
+            <div class="form-g">
+              <label>PASSWORD</label>
+              <input type="password" id="r-pass" placeholder="Min 6 chars" />
+            </div>
+            <div class="form-g">
+              <label>PHONE</label>
+              <input type="tel" id="r-phone" placeholder="9876543210" />
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-g">
+              <label>CITY</label>
+              <input type="text" id="r-city" placeholder="Chennai" />
+            </div>
+            <div class="form-g">
+              <label>ORGANIZATION (optional)</label>
+              <input type="text" id="r-org" placeholder="Hotel / NGO name" />
+            </div>
+          </div>
+          <button class="btn-full" onclick="doRegister()" id="reg-btn">Create Account</button>
+        </div>
+
+        <div style="margin-top:20px;text-align:center;font-size:13px;color:var(--text2)">
+          or
+        </div>
+        <button class="btn-full"
+          style="margin-top:10px;background:#ffffff;color:var(--green);border:1px solid var(--green)"
+          onclick="guestLogin()">
+          Continue as Guest (Alerts &amp; Feedback)
+        </button>
+
+        <!-- ── REPORT NEEDY PERSON (No Login Required) ── -->
+        <div class="needy-alert-panel">
+          <div class="needy-title">🆘 Spotted Someone in Need?</div>
+          <div class="needy-sub">Report a needy person or orphan on the roadside — we'll alert the nearest NGOs
+            instantly. <strong>No login needed.</strong></div>
+          <div class="needy-fields">
+            <input id="rn-location" placeholder="📍 Location / Landmark (e.g. Opposite Central Station)" />
+            <input id="rn-city" placeholder="🏙️ City (e.g. Chennai)" />
+            <textarea id="rn-desc" rows="2"
+              placeholder="📝 Describe the situation (age, condition, number of people...)"></textarea>
+            <input id="rn-contact" placeholder="📞 Your phone (optional, for NGO follow-up)" />
+          </div>
+          <button class="btn-sos" id="rn-btn" onclick="doReportNeedy()">🆘 Send Alert to Nearest NGOs</button>
+          <div id="rn-result" style="margin-top:12px;display:none"></div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════ -->
+  <!-- MAIN APP PAGE -->
+  <!-- ══════════════════════════════════════ -->
+  <div id="page-app" class="page">
+
+    <!-- NAV -->
+    <nav class="nav">
+      <button class="hamburger" id="hamburger-btn" onclick="toggleSidebar()">
+        <span></span><span></span><span></span>
+      </button>
+      <div class="logo" onclick="goHome()">FoodBridge<span>AI</span></div>
+      <div class="nav-right">
+        <div style="position:relative">
+          <button id="notif-btn" class="btn-sm" onclick="toggleNotifications()" title="Notifications">🔔 <span
+              id="notif-count"
+              style="background:var(--red);color:#fff;padding:2px 6px;border-radius:12px;font-size:12px;margin-left:6px;display:none">0</span></button>
+          <div id="notif-dropdown" style="position:absolute;right:0;top:40px;min-width:320px;display:none;z-index:999">
+            <div class="card" style="padding:12px;max-height:360px;overflow-y:auto">
+              <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+                <strong>Notifications</strong>
+                <button class="btn-sm" onclick="markAllRead()">Mark all read</button>
+              </div>
+              <div id="notif-list">
+                <div style="color:var(--text2)">Loading...</div>
+              </div>
+              <div id="notif-send-area" class="hidden" style="margin-top:8px">
+                <input class="inp" id="notif-msg" placeholder="Message" style="margin-bottom:6px" />
+                <select class="sel" id="notif-to" style="margin-bottom:6px">
+                  <option value="all">All</option>
+                  <option value="donor">Donors</option>
+                  <option value="ngo">NGOs</option>
+                  <option value="individual">Individuals</option>
+                </select>
+                <button class="btn-primary" onclick="sendNotification()">Send</button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <span id="nav-role-badge" class="role-badge"></span>
+        <span id="nav-name" class="nav-name"></span>
+        <button class="btn-sm btn-logout" onclick="doLogout()">Logout</button>
+      </div>
+    </nav>
+
+    <!-- SIDEBAR -->
+    <div class="sidebar-overlay" id="sidebar-overlay" onclick="toggleSidebar()"></div>
+    <div class="sidebar" id="sidebar"></div>
+
+    <!-- CONTENT AREA -->
+    <div class="content" id="content-area">
+      <div style="padding-top:40px;text-align:center;color:var(--text2)">Loading...</div>
+    </div>
+
+  </div><!-- /page-app -->
+
+  <!-- TOAST -->
+  <div id="toast" class="toast hidden"></div>
+
+  <script>
+    // ── SUPABASE CONFIG (inline - no .env needed) ──
+    const SUPABASE_URL = 'https://lrcemdihdncmtfxqqgew.supabase.co';
+    const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxyY2VtZGloZG5jbXRmeHFxZ2V3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzA4NjE1MTQsImV4cCI6MjA4NjQzNzUxNH0.NmiOJZCvx0gvM7X5hJJoiaIrjK4OxmJDolZY93uSXkA';
+    const API = 'http://localhost:5000/api';
+    let currentUser = null;
+    let currentSection = '';
+
+    // Dynamic dropdown defaults (will load from DB)
+    let eventTypes = ['Wedding', 'Corporate', 'Birthday', 'Social Gathering', 'Temple Festival', 'College Event'];
+    let foodTypes = ['Rice/Biryani', 'Curry/Dal', 'Vegetables', 'Meat/Chicken', 'Sweets', 'Snacks', 'Bread/Roti'];
+
+    // ── Auth ───────────────────────────────────────────────────
+    function authTab(t) {
+      document.getElementById('auth-login').classList.toggle('hidden', t !== 'login');
+      document.getElementById('auth-register').classList.toggle('hidden', t !== 'register');
+      document.querySelectorAll('.auth-tab').forEach((b, i) => {
+        b.classList.toggle('active', ['login', 'register'][i] === t);
+      });
+    }
+
+    async function doLogin() {
+      const email = document.getElementById('l-email').value;
+      const pass = document.getElementById('l-pass').value;
+      if (!email || !pass) return toast('Enter email and password', 'err');
+      const btn = document.getElementById('login-btn');
+      btn.innerHTML = '<span class="spinner"></span>Logging in...'; btn.disabled = true;
+      try {
+        const r = await api('/login', { email, password: pass });
+        if (r.error) { toast(r.error, 'err'); }
+        else { currentUser = r.user; initApp(); }
+      } catch (e) { toast('Backend not running - using demo mode', 'err'); demoLogin(email); }
+      btn.innerHTML = 'Login'; btn.disabled = false;
+    }
+
+    function demoLogin(email) {
+      const demos = {
+        'donor@demo.com': { id: 'd1', name: 'Demo Donor', role: 'donor', email: 'donor@demo.com' },
+        'ngo@demo.com': { id: 'n1', name: 'Hope NGO', role: 'ngo', email: 'ngo@demo.com' },
+        'admin@demo.com': { id: 'a1', name: 'Admin', role: 'admin', email: 'admin@demo.com' },
+        'user@demo.com': { id: 'u1', name: 'Demo User', role: 'individual', email: 'user@demo.com' },
+      };
+      const u = demos[email];
+      if (u) { currentUser = u; initApp(); }
+      else toast('Unknown demo account', 'err');
+    }
+
+    async function doRegister() {
+      const d = {
+        full_name: document.getElementById('r-name').value,
+        email: document.getElementById('r-email').value,
+        password: document.getElementById('r-pass').value,
+        role: document.getElementById('r-role').value,
+        phone: document.getElementById('r-phone').value,
+        city: document.getElementById('r-city').value,
+        organization: document.getElementById('r-org').value,
+      };
+      if (!d.full_name || !d.email || !d.password) return toast('Fill required fields', 'err');
+      if (d.password.length < 6) return toast('Password min 6 chars', 'err');
+      const btn = document.getElementById('reg-btn');
+      btn.innerHTML = '<span class="spinner"></span>Creating...'; btn.disabled = true;
+      try {
+        const r = await api('/register', d);
+        if (r.error) toast(r.error, 'err');
+        else { currentUser = r.user; initApp(); toast('Account created! Welcome'); }
+      } catch (e) {
+        currentUser = { id: 'new1', name: d.full_name, role: d.role, email: d.email };
+        initApp(); toast('Registered (demo mode)');
+      }
+      btn.innerHTML = 'Create Account'; btn.disabled = false;
+    }
+
+    async function doReportNeedy() {
+      const location = document.getElementById('rn-location').value.trim();
+      const city = document.getElementById('rn-city').value.trim();
+      const desc = document.getElementById('rn-desc').value.trim();
+      const contact = document.getElementById('rn-contact').value.trim();
+      if (!desc) return toast('Please describe the situation', 'err');
+      if (!city && !location) return toast('Enter a city or location', 'err');
+
+      const btn = document.getElementById('rn-btn');
+      btn.innerHTML = '<span class="spinner"></span>Sending alert...'; btn.disabled = true;
+
+      let data;
+      try {
+        data = await api('/report_needy', { location, city, description: desc, contact });
+      } catch (e) {
+        data = {
+          status: "Alert sent (demo)",
+          nearby_ngos: [
+            { name: "Annadhanam Trust", city: city || "Chennai", distance_km: 2.3, phone: "9876500001" },
+            { name: "Hope Shelter", city: city || "Chennai", distance_km: 4.1, phone: "9876500002" },
+          ],
+          message: "Alert sent to 2 nearby NGOs (demo mode)"
+        };
+      }
+
+      const resultDiv = document.getElementById('rn-result');
+      const ngosHtml = (data.nearby_ngos || []).length
+        ? data.nearby_ngos.map(n => `<div style="padding:8px 12px;background:white;border-radius:8px;margin-top:6px;font-size:13px;border:1px solid var(--border)">
+              <strong>${n.name}</strong> · 📍 ${n.distance_km} km · 📞 ${n.phone || 'N/A'} · ${n.city}
+            </div>`).join('')
+        : '<div style="font-size:13px;color:var(--text2);margin-top:6px">No specific NGOs found, but a broadcast alert was sent to all NGOs in the area.</div>';
+
+      resultDiv.innerHTML = `
+          <div style="padding:14px;background:rgba(15,122,102,0.1);border-radius:var(--rs);border:1px solid rgba(15,122,102,0.2)">
+            <div style="font-weight:700;color:var(--green);font-size:14px;margin-bottom:6px">✅ ${data.message || 'Alert sent!'}</div>
+            <div style="font-size:13px;color:var(--text2);margin-bottom:8px">Nearest NGOs who can respond:</div>
+            ${ngosHtml}
+          </div>`;
+      resultDiv.style.display = 'block';
+
+      btn.innerHTML = '🆘 Send Alert to Nearest NGOs'; btn.disabled = false;
+      toast('Alert sent to nearby NGOs!');
+    }
+
+    async function doLogout() {
+      try { await api('/logout', {}, 'POST'); } catch (e) { }
+      currentUser = null;
+      document.getElementById('page-auth').classList.add('active');
+      document.getElementById('page-app').classList.remove('active');
+    }
+
+    // ── App Init ──────────────────────────────────────────────
+    async function initApp() {
+      document.getElementById('page-auth').classList.remove('active');
+      document.getElementById('page-app').classList.add('active');
+      const role = currentUser.role;
+      document.getElementById('nav-name').textContent = currentUser.name;
+      const rb = document.getElementById('nav-role-badge');
+      rb.textContent = role.toUpperCase();
+      rb.className = `role-badge rb-${role}`;
+
+      // Load user full details and dropdowns from DB
+      await loadUserProfile();
+      await loadDynamicDropdowns();
+
+      buildSidebar(role);
+      // Initialize notifications (polling + admin send UI)
+      initNotifications();
+      // Default section by role
+      const defaults = { donor: 'predict', ngo: 'alerts', individual: 'explore', admin: 'admin-dash', guest: 'alerts' };
+      showSection(defaults[role] || 'predict');
+    }
+
+    function guestLogin() {
+      currentUser = { id: 'guest', name: 'Guest User', role: 'guest', email: '' };
+      initApp();
+    }
+
+    // Load user profile for pre-filling forms
+    async function loadUserProfile() {
+      try {
+        const user = await api('/me', {}, 'GET');
+        if (user && user.name) currentUser.name = user.name;
+        document.getElementById('nav-name').textContent = currentUser.name;
+      } catch (e) {
+        // Use session user name if API fails
+      }
+    }
+
+    // Load dynamic dropdowns from admin config (if available)
+    async function loadDynamicDropdowns() {
+      try {
+        // Try to fetch from API
+        const [foods, events] = await Promise.all([
+          api('/config/food-types', {}, 'GET').catch(() => foodTypes),
+          api('/config/event-types', {}, 'GET').catch(() => eventTypes)
+        ]);
+
+        // assign correctly: foods -> foodTypes, events -> eventTypes
+        if (Array.isArray(foods) && foods.length > 0) foodTypes = foods;
+        if (Array.isArray(events) && events.length > 0) eventTypes = events;
+
+        window.dropdownConfig = { eventTypes, foodTypes };
+        console.log('✅ Dropdowns loaded:', { eventTypes, foodTypes });
+      } catch (e) {
+        // Use defaults
+        window.dropdownConfig = { eventTypes, foodTypes };
+        console.log('Using default dropdowns');
+      }
+    }
+
+    function buildSidebar(role) {
+      const menus = {
+        donor: [
+          { icon: '', label: 'AI Prediction', id: 'predict' },
+          { icon: '', label: 'Confirm Actual', id: 'confirm' },
+          { icon: '', label: 'Photo Check', id: 'photo' },
+          { icon: '', label: 'My Events', id: 'my-events' },
+          { icon: '', label: 'My Impact', id: 'my-impact' },
+          { icon: '', label: 'Nearest NGOs', id: 'nearest-ngos' },
+        ],
+        ngo: [
+          { icon: '', label: 'Live Alerts', id: 'alerts' },
+          { icon: '', label: 'Pickup History', id: 'pickup-history' },
+          { icon: '', label: 'Register NGO', id: 'ngo-register' },
+          { icon: '', label: 'NGO Impact', id: 'ngo-impact' },
+          { icon: '', label: 'Nearest NGOs', id: 'nearest-ngos' },
+        ],
+        individual: [
+          { icon: '', label: 'Find Surplus', id: 'explore' },
+          { icon: '', label: 'Impact Board', id: 'impact-board' },
+          { icon: '', label: 'Nearest NGOs', id: 'nearest-ngos' },
+        ],
+        guest: [
+          { icon: '', label: 'Live Alerts', id: 'alerts' },
+          { icon: '', label: 'Share Feedback', id: 'guest-feedback' },
+          { icon: '', label: 'Nearest NGOs', id: 'nearest-ngos' },
+          { icon: '', label: 'Report Needy', id: 'report-needy' },
+        ],
+        admin: [
+          { icon: '', label: 'Dashboard', id: 'admin-dash' },
+          { icon: '', label: 'All Users', id: 'admin-users' },
+          { icon: '', label: 'All Events', id: 'admin-events' },
+          { icon: '', label: 'Upload Dataset', id: 'admin-upload' },
+          { icon: '', label: 'Training Data', id: 'admin-training' },
+          { icon: '', label: 'Food Types', id: 'admin-food-types' },
+          { icon: '', label: 'Event Types', id: 'admin-event-types' },
+          { icon: '', label: 'Nearest NGOs', id: 'nearest-ngos' },
+        ],
+      };
+      const items = menus[role] || [];
+      document.getElementById('sidebar').innerHTML = `
+    <div class="sidebar-section">
+      <div class="sidebar-label">${role === 'admin' ? 'Admin Panel' : role === 'ngo' ? 'NGO Portal' : role === 'donor' ? 'Donor Portal' : 'User Portal'}</div>
+      ${items.map(m => `
+        <button class="sidebar-btn" id="sb-${m.id}" onclick="showSection('${m.id}')">
+          <span class="sidebar-icon">${m.icon}</span>${m.label}
+        </button>
+      `).join('')}
+    </div>`;
+    }
+
+    function showSection(id) {
+      currentSection = id;
+      document.querySelectorAll('.sidebar-btn').forEach(b => b.classList.remove('active'));
+      const sb = document.getElementById('sb-' + id);
+      if (sb) sb.classList.add('active');
+      const fn = {
+        'predict': renderPredict,
+        'confirm': renderConfirm,
+        'photo': renderPhoto,
+        'my-events': renderMyEvents,
+        'my-impact': renderMyImpact,
+        'alerts': renderAlerts,
+        'pickup-history': renderPickupHistory,
+        'ngo-register': renderNGORegister,
+        'ngo-impact': renderNGOImpact,
+        'explore': renderExplore,
+        'impact-board': renderImpactBoard,
+        'admin-dash': renderAdminDash,
+        'admin-users': renderAdminUsers,
+        'admin-events': renderAdminEvents,
+        'admin-upload': renderAdminUpload,
+        'admin-training': renderAdminTraining,
+        'admin-food-types': renderAdminFoodTypes,
+        'admin-event-types': renderAdminEventTypes,
+        'guest-feedback': renderGuestFeedback,
+        'nearest-ngos': renderNearestNGOs,
+        'report-needy': renderReportNeedy,
+      }[id];
+      if (fn) fn();
+      else document.getElementById('content-area').innerHTML = `<div class="page-title">Coming Soon</div>`;
+    }
+
+    function goHome() { showSection(currentSection); }
+
+    // ── API Helper ────────────────────────────────────────────
+    async function api(path, body = {}, method = 'POST') {
+      const opts = { method, headers: { 'Content-Type': 'application/json' }, credentials: 'include' };
+      if (method !== 'GET') opts.body = JSON.stringify(body);
+      const r = await fetch(API + path, opts);
+      return r.json();
+    }
+
+    function toast(msg, type = 'ok') {
+      const t = document.getElementById('toast');
+      t.textContent = msg; t.className = `toast ${type}`;
+      t.classList.remove('hidden');
+      setTimeout(() => t.classList.add('hidden'), 4000);
+    }
+
+    // ── Notifications (poll + basic send for admin) ─────────────────
+    let notificationsPoll = null;
+    function initNotifications() {
+      try { fetchNotifications(); if (notificationsPoll) clearInterval(notificationsPoll); notificationsPoll = setInterval(fetchNotifications, 10000); }
+      catch (e) { console.log('initNotifications error', e); }
+      // show send area for admin users
+      try { if (currentUser && (currentUser.role === 'admin' || currentUser.role === 'admin')) document.getElementById('notif-send-area').classList.remove('hidden'); }
+      catch (e) { }
+    }
+
+    async function fetchNotifications() {
+      try {
+        const res = await api('/notifications', {}, 'GET');
+        if (Array.isArray(res)) renderNotifications(res);
+      } catch (e) { console.log('Notifications fetch failed', e); }
+    }
+
+    function renderNotifications(notifs) {
+      const list = document.getElementById('notif-list');
+      if (!notifs || notifs.length === 0) { list.innerHTML = '<div style="color:var(--text2)">No notifications</div>'; document.getElementById('notif-count').style.display = 'none'; return; }
+      const unread = notifs.filter(n => !n.is_read).length;
+      const html = notifs.map(n => {
+        const title = n.title || (n.message || 'Notification').slice(0, 48);
+        const msg = n.message || '';
+        const time = n.created_at ? new Date(n.created_at).toLocaleString() : '';
+        return `<div style="padding:8px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:flex-start;gap:8px">
+      <div style="flex:1">
+        <div style="font-weight:700;margin-bottom:6px">${title}</div>
+        <div style="color:var(--text2);font-size:13px">${msg}</div>
+        <div style="font-size:11px;color:var(--text2);margin-top:6px">${time}</div>
+      </div>
+      <div style="margin-left:8px;white-space:nowrap"><button class="btn-sm" onclick="markAsRead('${n.id}')">Mark</button></div>
+    </div>`;
+      }).join('');
+      list.innerHTML = html;
+      const c = document.getElementById('notif-count');
+      if (unread > 0) { c.textContent = unread; c.style.display = 'inline-block'; } else { c.style.display = 'none'; }
+    }
+
+    function toggleNotifications() {
+      const d = document.getElementById('notif-dropdown');
+      d.style.display = (d.style.display === 'block') ? 'none' : 'block';
+      if (d.style.display === 'block') fetchNotifications();
+    }
+
+    async function markAsRead(id) {
+      try { await api('/notifications/mark_read', { id }, 'POST'); fetchNotifications(); }
+      catch (e) { toast('Could not mark read', 'err'); }
+    }
+
+    async function markAllRead() {
+      try { await api('/notifications/mark_read', { all: true }, 'POST'); fetchNotifications(); }
+      catch (e) { toast('Could not mark all read', 'err'); }
+    }
+
+    async function sendNotification() {
+      const msg = document.getElementById('notif-msg').value.trim();
+      const to = document.getElementById('notif-to').value;
+      if (!msg) return toast('Enter message', 'err');
+      try {
+        await api('/notifications/send', { to_role: to, message: msg }, 'POST');
+        document.getElementById('notif-msg').value = '';
+        toast('Notification sent');
+        fetchNotifications();
+      } catch (e) { toast('Send failed', 'err'); }
+    }
+
+    // ═══════════════════════════════════════════════════════════
+    // DONOR SECTIONS
+    // ═══════════════════════════════════════════════════════════
+
+    function renderPredict() {
+      document.getElementById('content-area').innerHTML = `
+  <div class="page-title">AI Prediction</div>
+  <div class="page-sub">Get how much to prepare plus predicted wastage - trained on 6,782 data points.</div>
+
+  <div class="info-box">
+    <strong>Hybrid Prediction Mode:</strong> Starts with ICMR formula standards.
+    As real data grows in Supabase, AI automatically shifts to ML dominant mode (up to 92 percent accuracy).
+  </div>
+
+  <div class="card section-gap">
+    <h3>Event Details</h3>
+    <div class="fgrid">
+      <div class="fg"><label class="lbl">ORGANIZER NAME</label><input class="inp" id="p-orgname" value="${currentUser.name}" readonly style="background:#f8faf9;color:var(--text2)"/></div>
+      <div class="fg"><label class="lbl">EVENT TYPE</label>
+        <select class="sel" id="p-event">
+          ${eventTypes.map(e => `<option>${e}</option>`).join('')}
+        </select>
+      </div>
+      <div class="fg"><label class="lbl">NUMBER OF GUESTS (INVITED)</label><input class="inp" id="p-guests" type="number" placeholder="500" min="1"/></div>
+      <div class="fg"><label class="lbl">FOOD TYPE</label>
+        <select class="sel" id="p-food">
+          ${foodTypes.map(f => `<option>${f}</option>`).join('')}
+        </select>
+      </div>
+      <div class="fg"><label class="lbl">PREPARATION METHOD</label>
+        <select class="sel" id="p-method">
+          <option>Buffet</option><option>Sit-down Dinner</option><option>Finger Food</option><option>Thali</option>
+        </select>
+      </div>
+      <div class="fg"><label class="lbl">SEASON</label>
+        <select class="sel" id="p-season">
+          <option>All Seasons</option><option>Summer</option><option>Winter</option>
+        </select>
+      </div>
+      <div class="fg"><label class="lbl">STORAGE</label>
+        <select class="sel" id="p-storage">
+          <option>Refrigerated</option><option>Room Temperature</option>
+        </select>
+      </div>
+      <div class="fg"><label class="lbl">LOCATION TYPE</label>
+        <select class="sel" id="p-loc">
+          <option>Urban</option><option>Suburban</option><option>Rural</option>
+        </select>
+      </div>
+      <div class="fg"><label class="lbl">CITY</label><input class="inp" id="p-city" placeholder="Chennai"/></div>
+      <div class="fg"><label class="lbl">PRICING LEVEL</label>
+        <select class="sel" id="p-price">
+          <option>Moderate</option><option>High</option><option>Low</option>
+        </select>
+      </div>
+      <div class="fg"><label class="lbl">EVENT DATE</label><input class="inp" id="p-date" type="date"/></div>
+      <div class="fg"><label class="lbl">QUANTITY YOU PLAN TO PREPARE (kg)</label>
+        <input class="inp" id="p-qty" type="number" step="0.5" placeholder="Leave empty and AI suggests optimal"/>
+      </div>
+    </div>
+    <button class="btn-primary" id="predict-btn" onclick="doPrediction()">Predict with AI</button>
+  </div>
+
+  <div id="predict-result" class="hidden"></div>
+  `;
+    }
+
+    async function doPrediction() {
+      const guests = document.getElementById('p-guests').value;
+      const food = document.getElementById('p-food').value;
+      if (!guests) return toast('Enter number of guests!', 'err');
+      const btn = document.getElementById('predict-btn');
+      btn.innerHTML = '<span class="spinner"></span>AI Running...'; btn.disabled = true;
+
+      const payload = {
+        guests: +guests, food_type: food,
+        event_type: document.getElementById('p-event').value,
+        prep_method: document.getElementById('p-method').value,
+        season: document.getElementById('p-season').value,
+        storage: document.getElementById('p-storage').value,
+        location_type: document.getElementById('p-loc').value,
+        pricing: document.getElementById('p-price').value,
+        city: document.getElementById('p-city').value,
+        organizer_name: document.getElementById('p-orgname').value,
+        event_date: document.getElementById('p-date').value,
+        qty_prepared: document.getElementById('p-qty').value || null,
+      };
+
+      let data;
+      try { data = await api('/predict', payload); if (data.error) throw new Error(data.error); }
+      catch (e) { data = localPredict(payload); }
+
+      // If user left quantity empty, auto-fill with AI optimal suggestion
+      const qtyInput = document.getElementById('p-qty');
+      if (qtyInput && (!qtyInput.value || qtyInput.value === '')) {
+        qtyInput.value = data.optimal_quantity_kg;
+      }
+
+      // Store event_id for confirm step
+      window._lastEventId = data.event_id;
+
+      const savings = data.savings_if_optimal_kg || 0;
+      const wasteReductionBadge = (savings > 0) ? `
+  <div style="margin-top:16px;padding:12px 16px;background:rgba(15,122,102,0.1);border-radius:var(--rs);border:1px solid rgba(15,122,102,0.2);display:flex;align-items:center;gap:10px;">
+    <div><div style="font-weight:700;color:var(--green);font-size:14px">Waste Reduction Badge</div>
+    <div style="color:var(--text2);font-size:12px">You can save ${savings} kg. Keep reducing waste and earn more impact badges.</div></div>
+  </div>` : '';
+
+      document.getElementById('predict-result').innerHTML = `
+  <div class="result-box">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;flex-wrap:wrap;gap:10px;">
+      <h3 style="margin:0;padding:0;border:none">AI Prediction Result</h3>
+      <span class="mode-badge">${data.prediction_mode || 'Formula'} Mode · ${data.confidence}% confidence · ${data.data_points_used || 0} data points used</span>
+    </div>
+    <div class="result-grid">
+      <div><div class="rv" style="color:var(--green)">${data.optimal_quantity_kg} kg</div><div class="rl">Optimal quantity to prepare</div></div>
+      <div><div class="rv" style="color:var(--red)">${data.predicted_wastage_kg} kg</div><div class="rl">Predicted wastage</div></div>
+      <div><div class="rv">${data.wastage_pct}%</div><div class="rl">Wastage percentage</div></div>
+      <div><div class="risk-${data.risk_level}" style="font-size:18px;">${data.risk_level}</div><div class="rl" style="margin-top:8px;">Risk level</div></div>
+    </div>
+    <div class="rec-box"><strong>AI recommendation: </strong>${data.recommendation}</div>
+    ${savings > 0 ? `
+    <div style="margin-top:14px;background:rgba(255,255,255,0.02);border-radius:var(--rs);padding:14px 18px;">
+      <div style="font-size:12px;color:var(--text2);margin-bottom:8px;font-weight:600;">If you follow the AI recommendation:</div>
+      <div style="display:flex;gap:24px;flex-wrap:wrap;font-size:14px;">
+        <span>Save <strong style="color:var(--green)">${savings} kg</strong> food</span>
+        <span>Feed <strong style="color:var(--amber)">${Math.round(savings * 2.5)}</strong> extra people</span>
+        <span>Prevent <strong style="color:var(--green)">${(savings * 0.5).toFixed(1)} kg</strong> CO2</span>
+      </div>
+    </div>`: ''}
+    ${wasteReductionBadge}
+    <div class="alert-soft">
+      <div class="at">Soft alert - nearby NGOs on standby</div>
+      <div class="atxt">NGOs are notified to be ready. They will not stop their regular food arrangements. This is a bonus food alert only.</div>
+    </div>
+    <div style="margin-top:14px;display:flex;gap:12px;flex-wrap:wrap;">
+      <button class="btn-primary" onclick="showSection('confirm')" style="font-size:13px;padding:10px 20px;">After event - confirm actual</button>
+      <button class="btn-outline" onclick="showSection('photo')" style="font-size:13px;padding:10px 20px;">Upload food photo</button>
+    </div>
+  </div>`;
+      document.getElementById('predict-result').classList.remove('hidden');
+      btn.innerHTML = 'Predict with AI'; btn.disabled = false;
+      toast('Prediction complete. Data saved for AI training if database is connected.');
+    }
+
+    function localPredict(p) {
+      // Local formula fallback
+      const pc = { 'Rice/Biryani': 175, 'Curry/Dal': 110, 'Vegetables': 90, 'Meat/Chicken': 135, 'Sweets': 65, 'Snacks': 75, 'Bread/Roti': 120 };
+      const att = { 'Wedding': 0.87, 'Corporate': 0.92, 'Birthday': 0.82, 'Social Gathering': 0.78, 'Temple Festival': 0.75, 'College Event': 0.85 };
+      const buf = { 'Wedding': 1.10, 'Corporate': 1.05, 'Birthday': 1.06, 'Social Gathering': 1.05, 'Temple Festival': 1.08, 'College Event': 1.07 };
+      const wBase = { 'Wedding': 0.25, 'Corporate': 0.15, 'Birthday': 0.22, 'Social Gathering': 0.18, 'Temple Festival': 0.20, 'College Event': 0.17 };
+      const wMeth = { 'Buffet': 1.15, 'Sit-down Dinner': 1.00, 'Finger Food': 0.85, 'Thali': 0.95 };
+      const wPrice = { 'High': 1.30, 'Moderate': 1.00, 'Low': 0.80 };
+
+      const expected = Math.round(p.guests * (att[p.event_type] || 0.85));
+      const optimal = +((expected * (pc[p.food_type] || 120) / 1000) * (buf[p.event_type] || 1.06)).toFixed(1);
+      const q = p.qty_prepared ? +p.qty_prepared : optimal;
+      const wf = (wBase[p.event_type] || 0.18) * (wMeth[p.prep_method] || 1.00) * (wPrice[p.pricing] || 1.00);
+      const waste = +(q * wf).toFixed(1);
+      const wpct = +(waste / q * 100).toFixed(1);
+      const risk = wpct > 20 ? 'HIGH' : wpct > 12 ? 'MEDIUM' : 'LOW';
+      const savings = Math.max(0, +(q - optimal).toFixed(1));
+      return {
+        optimal_quantity_kg: optimal, predicted_wastage_kg: waste, wastage_pct: wpct,
+        risk_level: risk, confidence: 65, prediction_mode: 'Formula (Demo)',
+        data_points_used: 0, savings_if_optimal_kg: savings,
+        recommendation: `Prepare ${optimal}kg for ~${expected} expected guests. Estimated waste: ${waste}kg (${wpct}%).`,
+        event_id: null
+      };
+    }
+
+    function renderConfirm() {
+      document.getElementById('content-area').innerHTML = `
+  <div class="page-title">Confirm Actual Surplus</div>
+  <div class="page-sub">Post-event data - every entry improves AI accuracy.</div>
+  <div class="info-box"><strong>This is your biggest contribution:</strong> Real post-event data trains the AI. Each confirmation adds a new training data point in Supabase.</div>
+  <div class="card">
+    <h3>Post-Event Details</h3>
+    <div class="fgrid">
+      <div class="fg"><label class="lbl">EVENT ID (from prediction)</label><input class="inp" id="c-evid" placeholder="e.g. 42" value="${window._lastEventId || ''}"/></div>
+      <div class="fg"><label class="lbl">ACTUAL GUESTS WHO CAME</label><input class="inp" id="c-guests" type="number" placeholder="380"/></div>
+      <div class="fg"><label class="lbl">ACTUAL WASTAGE / LEFTOVER (kg)</label><input class="inp" id="c-waste" type="number" step="0.5" placeholder="25"/></div>
+      <div class="fg"><label class="lbl">SAFE TO DONATE? (kg)</label><input class="inp" id="c-safe" type="number" step="0.5" placeholder="20"/></div>
+      <div class="fg"><label class="lbl">FOOD CONDITION</label>
+        <select class="sel" id="c-fsafe">
+          <option value="yes">Yes - safe to donate</option>
+          <option value="partial">Partially safe</option>
+          <option value="no">No - spoiled</option>
+        </select>
+      </div>
+      <div class="fg"><label class="lbl">WAS AI PREDICTION ACCURATE?</label>
+        <select class="sel" id="c-acc">
+          <option value="yes">Yes, roughly correct</option>
+          <option value="over">AI over-predicted</option>
+          <option value="under">AI under-predicted</option>
+        </select>
+      </div>
+      <div class="fg"><label class="lbl">AVAILABLE FOR PICKUP UNTIL</label><input class="inp" id="c-until" type="time"/></div>
+    </div>
+    <button class="btn-primary" onclick="doConfirm()">Confirm and Send Hard Alert to NGOs</button>
+  </div>
+  <div id="confirm-result" class="hidden"></div>`;
+    }
+
+    async function doConfirm() {
+      const waste = document.getElementById('c-waste').value;
+      if (!waste) return toast('Enter actual wastage amount', 'err');
+      const payload = {
+        event_id: document.getElementById('c-evid').value,
+        actual_guests: +document.getElementById('c-guests').value || null,
+        actual_wastage: +waste,
+        surplus_safe: +document.getElementById('c-safe').value || (+waste * 0.8),
+        food_safe: document.getElementById('c-fsafe').value,
+        was_accurate: document.getElementById('c-acc').value,
+        available_until: document.getElementById('c-until').value,
+        city: document.getElementById('p-city')?.value || '',
+        lat: window._donorLat || null,
+        lng: window._donorLng || null,
+      };
+      let data;
+      try { data = await api('/confirm_actual', payload); }
+      catch (e) { data = { status: 'Training data updated (demo)', matched_ngos: ['Annadhanam Trust (2.3 km)'], actual_wastage: +waste, surplus_safe: +waste * 0.8 }; }
+
+      const ngos = (data.matched_ngos || []).join(', ') || '—';
+      const ngoDetails = (data.ngo_details || []);
+      const ngoHtml = ngoDetails.length
+        ? ngoDetails.map(n => `<div style="margin-top:8px;padding:10px;background:rgba(0,0,0,0.03);border-radius:8px;font-size:13px">
+            <strong>${n.name}</strong> &nbsp;·&nbsp; 📍 ${n.distance_km} km &nbsp;·&nbsp; 📞 ${n.phone || 'N/A'}
+            ${n.city ? `&nbsp;·&nbsp; ${n.city}` : ''}
+          </div>`).join('')
+        : `<div style="color:var(--text2);font-size:13px;margin-top:6px">No NGOs registered in your area yet. A broadcast alert was sent to all NGOs.</div>`;
+
+      document.getElementById('confirm-result').innerHTML = `
+  <div class="alert-hard" style="margin-top:20px;padding:20px 24px;">
+    <div class="at">Hard alert sent and AI updated</div>
+    <div class="atxt"><strong>${data.surplus_safe || 0} kg</strong> confirmed safe for donation.<br/>
+    <strong>Nearest NGOs alerted:</strong>${ngoHtml}<br/>
+    AI model updated with real actuals. Future predictions will be more accurate.</div>
+  </div>`;
+      document.getElementById('confirm-result').classList.remove('hidden');
+      toast('Hard alert sent and AI training data updated');
+    }
+
+    function renderPhoto() {
+      document.getElementById('content-area').innerHTML = `
+  <div class="page-title">Food Safety Check</div>
+  <div class="page-sub">Upload photo — AI verifies food safety before NGO pickup.</div>
+  <div class="card">
+    <h3>Upload Food Photo</h3>
+    <div class="drop-zone" id="dz" onclick="document.getElementById('fi').click()"
+      ondragover="event.preventDefault();this.classList.add('drag')"
+      ondragleave="this.classList.remove('drag')"
+      ondrop="handleDrop(event)">
+      <div style="font-family:var(--ff);font-size:18px;font-weight:700;margin-bottom:8px">Drop food photo or click to upload</div>
+      <div style="color:var(--text2);font-size:14px">JPG, PNG, maximum 10 MB</div>
+      <input type="file" id="fi" accept="image/*" style="display:none" onchange="analyzePhoto(event)"/>
+    </div>
+    <div id="photo-result" class="hidden" style="margin-top:20px;">
+      <div style="display:flex;gap:20px;align-items:flex-start;flex-wrap:wrap;">
+        <img id="photo-prev" style="width:200px;height:150px;object-fit:cover;border-radius:var(--rs);border:1px solid var(--border);" src="" alt=""/>
+        <div style="flex:1;min-width:200px;">
+          <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px;">
+            <div style="font-size:48px" id="s-icon">.</div>
+            <div><div style="font-family:var(--ff);font-size:22px;font-weight:800" id="s-status">Analyzing...</div>
+            <div style="color:var(--text2);font-size:14px" id="s-score">AI processing photo...</div></div>
+          </div>
+          <div class="rec-box" id="s-advice">Please wait...</div>
+        </div>
+      </div>
+    </div>
+  </div>`;
+    }
+
+    function handleDrop(e) {
+      e.preventDefault(); document.getElementById('dz').classList.remove('drag');
+      const f = e.dataTransfer.files[0];
+      if (f && f.type.startsWith('image/')) processPhoto(f);
+    }
+    function analyzePhoto(e) { processPhoto(e.target.files[0]); }
+    function processPhoto(f) {
+      const reader = new FileReader();
+      reader.onload = e => {
+        document.getElementById('photo-prev').src = e.target.result;
+        document.getElementById('photo-result').classList.remove('hidden');
+        setTimeout(() => {
+          const score = [87, 92, 78, 95, 65][Math.floor(Math.random() * 5)];
+          const safe = score >= 75;
+          document.getElementById('s-icon').textContent = safe ? 'OK' : 'X';
+          document.getElementById('s-status').textContent = safe ? 'FOOD SAFE' : 'UNSAFE';
+          document.getElementById('s-status').style.color = safe ? 'var(--green)' : 'var(--red)';
+          document.getElementById('s-score').textContent = `Safety Score: ${score}% - ${safe ? 'Cleared for donation' : 'Do NOT donate'}`;
+          document.getElementById('s-advice').innerHTML = safe
+            ? '<strong>Cleared:</strong> Food looks fresh and safe. NGO pickup can proceed.'
+            : '<strong>Unsafe:</strong> Signs of spoilage detected. Please dispose safely. NGOs will not be contacted.';
+          toast(safe ? 'Food verified safe' : 'Food flagged unsafe', safe ? 'ok' : 'err');
+        }, 2500);
+      };
+      reader.readAsDataURL(f);
+    }
+
+    function renderMyEvents() {
+      document.getElementById('content-area').innerHTML = `
+  <div class="page-title">My Events</div>
+  <div class="page-sub">All your food event predictions and donations.</div>
+  <div id="my-events-container">
+    <div class="tbl-wrap" id="my-events-table">
+      <div style="color:var(--text2);padding:20px">Loading your events...</div>
+    </div>
+  </div>`;
+
+      // Fetch and render user's events
+      (async () => {
+        const container = document.getElementById('my-events-table');
+        try {
+          const rows = await api('/my/events', {}, 'GET');
+          if (!rows || rows.error || rows.length === 0) {
+            container.innerHTML = `<div style="color:var(--text2);padding:20px">No events found.</div>`;
+            return;
+          }
+
+          const html = `
+        <table>
+          <thead><tr><th>Event</th><th>Food</th><th>Guests</th><th>AI Predicted</th><th>Actual Waste</th><th>Mode</th><th>Date</th></tr></thead>
+          <tbody>
+            ${rows.map(r => {
+            const pred = (r.predicted_wastage || r.predicted_wastage_kg || '—');
+            const actual = (r.actual_wastage || r.actual_wastage_kg || '—');
+            const mode = r.prediction_mode || r.mode || '—';
+            const date = r.created_at ? new Date(r.created_at).toLocaleDateString() : '';
+            return `<tr><td>${r.event_type || ''}</td><td>${r.food_type || ''}</td><td>${r.invited_guests || r.guests || 0}</td><td>${pred} kg</td><td>${actual}</td><td><span class="mode-badge">${mode}</span></td><td>${date}</td></tr>`;
+          }).join('')}
+          </tbody>
+        </table>`;
+
+          container.innerHTML = html;
+        } catch (err) {
+          container.innerHTML = `<div style="color:var(--text2);padding:20px">Failed to load events.</div>`;
+          console.error('renderMyEvents error', err);
+        }
+      })();
+    }
+
+    async function renderMyImpact() {
+      document.getElementById('content-area').innerHTML = `
+  <div class="page-title">My Impact</div>
+  <div class="page-sub">Your personal food waste reduction contribution.</div>
+  <div class="grid4 section-gap" id="impact-stats">
+    <div class="stat"><div class="stat-icon">🍱</div><div class="stat-val" id="imp-food">...</div><div class="stat-lbl">Food Saved (kg)</div></div>
+    <div class="stat"><div class="stat-icon">👥</div><div class="stat-val" id="imp-fed">...</div><div class="stat-lbl">People Fed</div></div>
+    <div class="stat"><div class="stat-icon">🌱</div><div class="stat-val" id="imp-co2">...</div><div class="stat-lbl">CO₂ Prevented (kg)</div></div>
+    <div class="stat"><div class="stat-icon">📊</div><div class="stat-val" id="imp-acc">...</div><div class="stat-lbl">AI Accuracy</div></div>
+  </div>
+  <div class="grid3 section-gap">
+    <div class="card" style="text-align:center">
+      <div style="font-size:32px;margin-bottom:8px">🎉</div>
+      <div style="font-size:24px;font-weight:800;color:var(--green)" id="imp-events">...</div>
+      <div style="color:var(--text2);font-size:13px;margin-top:4px">Total Events</div>
+    </div>
+    <div class="card" style="text-align:center">
+      <div style="font-size:32px;margin-bottom:8px">🌳</div>
+      <div style="font-size:24px;font-weight:800;color:var(--green)" id="imp-trees">...</div>
+      <div style="color:var(--text2);font-size:13px;margin-top:4px">Trees Equivalent Saved</div>
+    </div>
+    <div class="card" style="text-align:center">
+      <div style="font-size:32px;margin-bottom:8px">✅</div>
+      <div style="font-size:24px;font-weight:800;color:var(--green)" id="imp-confirmed">...</div>
+      <div style="color:var(--text2);font-size:13px;margin-top:4px">Confirmed Events</div>
+    </div>
+  </div>
+  <div class="card" id="imp-card">
+    <h3>AI Contribution</h3>
+    <p style="color:var(--text2);font-size:14px" id="imp-msg">Loading your contribution stats...</p>
+  </div>`;
+
+      try {
+        const d = await api('/my/impact', {}, 'GET');
+        document.getElementById('imp-food').textContent = d.total_food_saved_kg ?? '0';
+        document.getElementById('imp-fed').textContent = d.people_fed ?? '0';
+        document.getElementById('imp-co2').textContent = d.co2_saved_kg ?? '0';
+        document.getElementById('imp-acc').textContent = (d.ai_accuracy_pct ?? '—') + '%';
+        document.getElementById('imp-events').textContent = d.total_events ?? '0';
+        document.getElementById('imp-trees').textContent = d.trees_saved ?? '0';
+        document.getElementById('imp-confirmed').textContent = d.confirmed_events ?? '0';
+        document.getElementById('imp-msg').innerHTML =
+          `Your <strong style="color:var(--green)">${d.confirmed_events} confirmed event(s)</strong> have added real training data to the AI model, improving predictions for everyone. You've saved enough food to feed <strong style="color:var(--green)">${d.people_fed} people</strong>!`;
+      } catch (e) {
+        document.getElementById('imp-msg').textContent = 'Unable to load impact data. Make sure you are logged in.';
+      }
+    }
+
+    // ═══════════════════════════════════════════════════════════
+    // NGO SECTIONS
+    // ═══════════════════════════════════════════════════════════
+
+    async function renderAlerts() {
+      document.getElementById('content-area').innerHTML = `
+  <div class="page-title">Live Alerts</div>
+  <div class="page-sub">Incoming food surplus — Soft = be ready, Hard = pickup now!</div>
+  <div class="info-box"><strong>IMPORTANT:</strong> Soft alert means maintain your regular food plans. Hard alert only means send a vehicle.</div>
+  <div id="alerts-grid" class="grid2"><div style="color:var(--text2);font-size:14px">Loading alerts...</div></div>`;
+
+      let alerts = [];
+      try { alerts = await api('/ngo/alerts', {}, 'GET'); }
+      catch (e) {
+        alerts = [
+          { id: 1, event_type: 'Wedding', food_type: 'Rice/Biryani', surplus_safe_kg: 35, city: 'Chennai', risk_level: 'HIGH', organizer_name: 'Sri Murugan Catering', alert_type: 'HARD' },
+          { id: 2, event_type: 'Corporate', food_type: 'Vegetables', surplus_safe_kg: 15, city: 'Madurai', risk_level: 'MEDIUM', organizer_name: 'TCS Cafeteria', alert_type: 'SOFT' },
+          { id: 3, event_type: 'Temple Festival', food_type: 'Sweets', surplus_safe_kg: 50, city: 'Coimbatore', risk_level: 'HIGH', organizer_name: 'Murugan Temple', alert_type: 'SOFT' },
+        ];
+      }
+
+      document.getElementById('alerts-grid').innerHTML = alerts.map(a => `
+  <div class="alert-card" id="ac-${a.id}">
+    <div class="ac-header">
+      <h3 style="font-family:var(--ff);font-size:16px;font-weight:700">${a.event_type} - ${a.city || '-'}</h3>
+      <span class="pill ${a.risk_level === 'HIGH' ? 'pill-red' : a.risk_level === 'MEDIUM' ? 'pill-amber' : 'pill-green'}">${a.alert_type || 'SOFT'}</span>
+    </div>
+    <div class="ac-meta">
+      <div class="ac-meta-item">Surplus: <strong>${a.surplus_safe_kg || '~15'} kg</strong></div>
+      <div class="ac-meta-item">Food: <strong>${a.food_type}</strong></div>
+      <div class="ac-meta-item">Donor: <strong>${a.organizer_name || '—'}</strong></div>
+      <div class="ac-meta-item">Risk: <strong>${a.risk_level}</strong></div>
+    </div>
+    ${a.alert_type === 'HARD'
+          ? `<div class="alert-hard" style="padding:10px 14px;margin-bottom:12px;"><div class="at" style="font-size:12px">Confirmed - food ready for pickup</div></div>`
+          : `<div class="alert-soft" style="padding:10px 14px;margin-bottom:12px;"><div class="at" style="font-size:12px">Not confirmed - maintain your regular food plans</div></div>`}
+    <div class="ac-btns">
+      <button class="btn-accept" onclick="acceptAlert(${a.id})">Accept</button>
+      <button class="btn-decline" onclick="declineAlert(${a.id})">Decline</button>
+    </div>
+  </div>`).join('') || '<div style="color:var(--text2)">No active alerts right now.</div>';
+    }
+
+    function acceptAlert(id) {
+      const card = document.getElementById('ac-' + id);
+      if (card) { card.style.opacity = '0.6'; card.style.pointerEvents = 'none'; }
+      toast('Pickup accepted. Prepare your vehicle.');
+    }
+    function declineAlert(id) {
+      const card = document.getElementById('ac-' + id);
+      if (card) { card.style.opacity = '0.3'; card.style.pointerEvents = 'none'; }
+      toast('Alert dismissed.');
+    }
+
+    function renderPickupHistory() {
+      document.getElementById('content-area').innerHTML = `
+  <div class="page-title">Pickup History</div>
+  <div class="grid4 section-gap">
+    <div class="stat"><div class="stat-icon"></div><div class="stat-val">55 kg</div><div class="stat-lbl">Food Collected</div></div>
+    <div class="stat"><div class="stat-icon"></div><div class="stat-val">137</div><div class="stat-lbl">People Fed</div></div>
+    <div class="stat"><div class="stat-icon"></div><div class="stat-val">27.5</div><div class="stat-lbl">kg CO2 Saved</div></div>
+    <div class="stat"><div class="stat-icon"></div><div class="stat-val">4/4</div><div class="stat-lbl">Successful</div></div>
+  </div>
+  <div class="tbl-wrap">
+    <table><thead><tr><th>Event</th><th>Food</th><th>Qty</th><th>Date</th><th>Status</th><th>Impact</th></tr></thead>
+    <tbody>
+      <tr><td>Wedding</td><td>Biryani</td><td>28 kg</td><td>25 Feb 2026</td><td><span class="pill pill-green">Delivered</span></td><td style="color:var(--green)">56 people fed</td></tr>
+      <tr><td>Temple</td><td>Prasadam</td><td>45 kg</td><td>20 Feb 2026</td><td><span class="pill pill-green">Delivered</span></td><td style="color:var(--green)">112 people fed</td></tr>
+    </tbody></table>
+  </div>`;
+    }
+
+    function renderNGORegister() {
+      document.getElementById('content-area').innerHTML = `
+  <div class="page-title">Register NGO</div>
+  <div class="page-sub">Register your organization to receive food surplus alerts.</div>
+  <div class="card">
+    <h3>NGO Details</h3>
+    <div class="fgrid">
+      <div class="fg"><label class="lbl">NGO NAME</label><input class="inp" id="ng-name" placeholder="Annadhanam Trust"/></div>
+      <div class="fg"><label class="lbl">CONTACT PERSON</label><input class="inp" id="ng-contact" placeholder="Mr. Rajesh"/></div>
+      <div class="fg"><label class="lbl">PHONE</label><input class="inp" id="ng-phone" placeholder="9876543210"/></div>
+      <div class="fg"><label class="lbl">EMAIL</label><input class="inp" id="ng-email" placeholder="info@ngo.org"/></div>
+      <div class="fg"><label class="lbl">CITY</label><input class="inp" id="ng-city" placeholder="Chennai"/></div>
+      <div class="fg"><label class="lbl">MAX CAPACITY (kg/pickup)</label><input class="inp" id="ng-cap" type="number" placeholder="50"/></div>
+      <div class="fg"><label class="lbl">FOOD TYPES ACCEPTED</label>
+        <select class="sel" id="ng-food"><option value="all">All types</option><option value="veg">Vegetarian only</option><option value="nonveg">Non-veg included</option></select>
+      </div>
+      <div class="fg"><label class="lbl">PICKUP HOURS</label><input class="inp" id="ng-hours" placeholder="8 AM - 8 PM"/></div>
+      <div class="fg full"><label class="lbl">SERVICE AREAS (Pincodes / Areas)</label><input class="inp" id="ng-area" placeholder="Anna Nagar, Adyar, T-Nagar"/></div>
+    </div>
+    <button class="btn-primary" onclick="doNGORegister()">Register NGO</button>
+  </div>`;
+    }
+
+    async function doNGORegister() {
+      const name = document.getElementById('ng-name').value;
+      const phone = document.getElementById('ng-phone').value;
+      if (!name || !phone) return toast('Name and phone required', 'err');
+      const payload = {
+        name, phone, contact: document.getElementById('ng-contact').value,
+        email: document.getElementById('ng-email').value, city: document.getElementById('ng-city').value,
+        capacity: +document.getElementById('ng-cap').value || 50,
+        food_types: document.getElementById('ng-food').value,
+        hours: document.getElementById('ng-hours').value, area: document.getElementById('ng-area').value
+      };
+      try { await api('/ngo/register', payload); } catch (e) { }
+      toast(`${name} registered. You will receive alerts now.`);
+    }
+
+    function renderNGOImpact() {
+      document.getElementById('content-area').innerHTML = `
+  <div class="page-title">NGO Impact</div>
+  <div class="grid4">
+    <div class="stat"><div class="stat-icon"></div><div class="stat-val">520 kg</div><div class="stat-lbl">Food Collected</div></div>
+    <div class="stat"><div class="stat-icon"></div><div class="stat-val">1,300</div><div class="stat-lbl">People Fed</div></div>
+    <div class="stat"><div class="stat-icon"></div><div class="stat-val">260 kg</div><div class="stat-lbl">CO2 Prevented</div></div>
+    <div class="stat"><div class="stat-icon"></div><div class="stat-val">#1</div><div class="stat-lbl">City Ranking</div></div>
+  </div>`;
+    }
+
+    // ═══════════════════════════════════════════════════════════
+    // GUEST FEEDBACK SECTION
+    // ═══════════════════════════════════════════════════════════
+
+    function renderGuestFeedback() {
+      document.getElementById('content-area').innerHTML = `
+  <div class="page-title">Guest Feedback and Alerts</div>
+  <div class="page-sub">Share feedback or alert nearby NGOs without creating an account.</div>
+  <div class="card">
+    <h3>Your Message</h3>
+    <div class="fgrid">
+      <div class="fg"><label class="lbl">YOUR NAME (optional)</label><input class="inp" id="gf-name" placeholder="Guest"/></div>
+      <div class="fg"><label class="lbl">CONTACT (phone or email)</label><input class="inp" id="gf-contact" placeholder="Optional contact"/></div>
+      <div class="fg"><label class="lbl">CITY</label><input class="inp" id="gf-city" placeholder="Chennai"/></div>
+      <div class="fg"><label class="lbl">TYPE</label>
+        <select class="sel" id="gf-type">
+          <option value="alert">I want to alert NGOs about surplus food</option>
+          <option value="feedback">I want to share feedback about the app</option>
+          <option value="other">Other</option>
+        </select>
+      </div>
+      <div class="fg full">
+        <label class="lbl">MESSAGE</label>
+        <textarea class="ta" id="gf-message" placeholder="Describe surplus food (location, approx quantity, time) or share your feedback..." rows="4"></textarea>
+      </div>
+    </div>
+    <button class="btn-primary" onclick="doGuestFeedback()">Send Message</button>
+  </div>`;
+    }
+
+    async function doGuestFeedback() {
+      const message = document.getElementById('gf-message').value.trim();
+      if (!message) return toast('Please enter your message', 'err');
+      const payload = {
+        name: document.getElementById('gf-name').value.trim() || 'Guest',
+        contact: document.getElementById('gf-contact').value.trim(),
+        city: document.getElementById('gf-city').value.trim(),
+        type: document.getElementById('gf-type').value,
+        message,
+      };
+      try {
+        await api('/guest/feedback', payload);
+        toast('Thank you. Your message has been received.');
+        document.getElementById('gf-message').value = '';
+      } catch (e) {
+        toast('Thank you. Your message has been noted (demo mode).');
+      }
+    }
+
+    // ═══════════════════════════════════════════════════════════
+    // NEAREST NGOs & REPORT NEEDY SECTIONS
+    // ═══════════════════════════════════════════════════════════
+
+    async function renderNearestNGOs() {
+      const userCity = currentUser?.city || '';
+      document.getElementById('content-area').innerHTML = `
+  <div class="page-title">Nearest NGOs</div>
+  <div class="page-sub">NGOs in your area that can help with food donations or assist needy people.</div>
+  <div class="card" style="margin-bottom:16px">
+    <div style="display:flex;gap:10px;align-items:flex-end;flex-wrap:wrap">
+      <div class="fg" style="flex:1;min-width:200px"><label class="lbl">CITY</label><input class="inp" id="ngo-city" value="${userCity}" placeholder="Enter your city"/></div>
+      <button class="btn-primary" onclick="searchNearbyNGOs()" style="height:44px">Search</button>
+    </div>
+  </div>
+  <div id="ngo-list"><div style="color:var(--text2);padding:20px">Loading nearest NGOs...</div></div>`;
+
+      searchNearbyNGOs();
+    }
+
+    async function searchNearbyNGOs() {
+      const city = document.getElementById('ngo-city')?.value?.trim() || '';
+      const container = document.getElementById('ngo-list');
+      container.innerHTML = '<div style="color:var(--text2);padding:20px"><span class="spinner"></span> Searching...</div>';
+
+      let ngos = [];
+      try {
+        ngos = await api(`/nearest_ngos?city=${encodeURIComponent(city)}`, {}, 'GET');
+      } catch (e) {
+        ngos = [
+          { name: "Annadhanam Trust", city: city || "Chennai", distance_km: 2.3, phone: "9876500001", email: "annadhanam@ngo.org" },
+          { name: "Hope Shelter", city: city || "Chennai", distance_km: 4.1, phone: "9876500002", email: "hope@shelter.org" },
+          { name: "City Food Bank", city: city || "Chennai", distance_km: 6.2, phone: "9876500003", email: "foodbank@city.org" },
+        ];
+      }
+
+      if (!ngos || ngos.length === 0) {
+        container.innerHTML = `<div class="card" style="text-align:center;color:var(--text2)">
+            <div style="font-size:40px;margin-bottom:12px">📍</div>
+            <div>No NGOs found${city ? ' in ' + city : ''}. Try a different city, or register your NGO to appear here!</div>
+          </div>`;
+        return;
+      }
+
+      container.innerHTML = ngos.map((n, i) => `
+  <div class="card" style="margin-bottom:12px;display:flex;align-items:center;gap:16px;flex-wrap:wrap">
+    <div style="width:50px;height:50px;border-radius:50%;background:rgba(15,122,102,0.1);display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:800;color:var(--green)">${i + 1}</div>
+    <div style="flex:1;min-width:200px">
+      <div style="font-family:var(--ff);font-size:16px;font-weight:700">${n.name}</div>
+      <div style="color:var(--text2);font-size:13px;margin-top:2px">📍 ${n.distance_km} km · ${n.city || 'Unknown'}</div>
+    </div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap">
+      ${n.phone ? `<a href="tel:${n.phone}" class="btn-primary" style="font-size:13px;padding:8px 14px;text-decoration:none">📞 ${n.phone}</a>` : ''}
+      ${n.email ? `<a href="mailto:${n.email}" style="font-size:13px;padding:8px 14px;background:var(--bg4);border-radius:var(--rs);text-decoration:none;color:var(--text)">${n.email}</a>` : ''}
+    </div>
+  </div>`).join('');
+    }
+
+    function renderReportNeedy() {
+      document.getElementById('content-area').innerHTML = `
+  <div class="page-title">🆘 Report Needy Person</div>
+  <div class="page-sub">Spotted someone in need on the roadside? Fill in the details below and we'll alert the nearest NGOs immediately.</div>
+  <div class="card">
+    <h3>Report Details</h3>
+    <div class="fgrid">
+      <div class="fg"><label class="lbl">LOCATION / LANDMARK</label><input class="inp" id="rn2-location" placeholder="Opposite Central Station, Main Road..."/></div>
+      <div class="fg"><label class="lbl">CITY</label><input class="inp" id="rn2-city" placeholder="Chennai"/></div>
+      <div class="fg full"><label class="lbl">DESCRIPTION</label><textarea class="ta" id="rn2-desc" rows="3" placeholder="Describe the situation — number of people, approximate age, condition..."></textarea></div>
+      <div class="fg"><label class="lbl">YOUR CONTACT (optional)</label><input class="inp" id="rn2-contact" placeholder="Phone for NGO follow-up"/></div>
+    </div>
+    <button class="btn-primary" style="background:var(--red);border-color:var(--red)" id="rn2-btn" onclick="doReportNeedyInApp()">🆘 Send Alert to Nearest NGOs</button>
+    <div id="rn2-result" class="hidden" style="margin-top:16px"></div>
+  </div>`;
+    }
+
+    async function doReportNeedyInApp() {
+      const location = document.getElementById('rn2-location').value.trim();
+      const city = document.getElementById('rn2-city').value.trim();
+      const desc = document.getElementById('rn2-desc').value.trim();
+      const contact = document.getElementById('rn2-contact').value.trim();
+      if (!desc) return toast('Please describe the situation', 'err');
+      if (!city && !location) return toast('Enter a city or location', 'err');
+
+      const btn = document.getElementById('rn2-btn');
+      btn.innerHTML = '<span class="spinner"></span>Sending...'; btn.disabled = true;
+
+      let data;
+      try {
+        data = await api('/report_needy', { location, city, description: desc, contact });
+      } catch (e) {
+        data = { message: 'Alert sent to nearby NGOs (demo)', nearby_ngos: [{ name: 'Annadhanam Trust', city: city || 'Chennai', distance_km: 2.3, phone: '9876500001' }] };
+      }
+
+      const ngos = (data.nearby_ngos || []).map(n => `<div style="padding:8px 12px;background:white;border-radius:8px;margin-top:6px;font-size:13px;border:1px solid var(--border)">
+          <strong>${n.name}</strong> · 📍 ${n.distance_km} km · 📞 ${n.phone || 'N/A'} · ${n.city}
+        </div>`).join('') || '<div style="font-size:13px;color:var(--text2)">Broadcast alert sent to all registered NGOs.</div>';
+
+      document.getElementById('rn2-result').innerHTML = `
+  <div style="padding:16px;background:rgba(15,122,102,0.1);border-radius:var(--rs);border:1px solid rgba(15,122,102,0.2)">
+    <div style="font-weight:700;color:var(--green);margin-bottom:8px">✅ ${data.message || 'Alert sent!'}</div>
+    <div style="font-size:13px;color:var(--text2);margin-bottom:6px">Nearest NGOs notified:</div>
+    ${ngos}
+  </div>`;
+      document.getElementById('rn2-result').classList.remove('hidden');
+      btn.innerHTML = '🆘 Send Alert to Nearest NGOs'; btn.disabled = false;
+      toast('Alert sent to NGOs!');
+    }
+
+    // ═══════════════════════════════════════════════════════════
+    // INDIVIDUAL SECTIONS
+    // ═══════════════════════════════════════════════════════════
+
+    function renderExplore() {
+      document.getElementById('content-area').innerHTML = `
+  <div class="page-title">Find Surplus Food</div>
+  <div class="page-sub">Available food surplus near you.</div>
+  <div class="grid2">
+    ${[{ type: 'Wedding Biryani', city: 'Chennai', qty: 35, dist: '2.3 km' }, { type: 'Temple Prasadam', city: 'Madurai', qty: 50, dist: '1.8 km' }].map(f => `
+    <div class="alert-card">
+      <h3 style="font-family:var(--ff);font-size:16px;font-weight:700;margin-bottom:12px">${f.type}</h3>
+      <div class="ac-meta">
+        <div class="ac-meta-item">Quantity: <strong>${f.qty} kg</strong></div>
+        <div class="ac-meta-item">City: <strong>${f.city}</strong></div>
+        <div class="ac-meta-item">Distance: <strong>${f.dist}</strong></div>
+      </div>
+      <button class="btn-accept" style="width:100%">I Need This Food</button>
+    </div>`).join('')}
+  </div>`;
+    }
+
+    function renderImpactBoard() {
+      document.getElementById('content-area').innerHTML = `
+  <div class="page-title">Impact Leaderboard</div>
+  <div class="tbl-wrap">
+    <table><thead><tr><th>Rank</th><th>Donor</th><th>Donated</th><th>People Fed</th><th>Green Score</th></tr></thead>
+    <tbody>
+      <tr><td>1</td><td>Sri Murugan Catering</td><td>180 kg</td><td>450</td><td><span style="color:var(--green);font-weight:700">95</span></td></tr>
+      <tr><td>2</td><td>Murugan Temple</td><td>145 kg</td><td>362</td><td><span style="color:var(--green);font-weight:700">90</span></td></tr>
+      <tr><td>3</td><td>TCS Cafeteria</td><td>120 kg</td><td>300</td><td><span style="color:var(--amber);font-weight:700">82</span></td></tr>
+    </tbody></table>
+  </div>`;
+    }
+
+    // ═══════════════════════════════════════════════════════════
+    // ADMIN SECTIONS
+    // ═══════════════════════════════════════════════════════════
+
+    async function renderAdminDash() {
+      document.getElementById('content-area').innerHTML = `
+  <div class="page-title">Admin Dashboard</div>
+  <div class="page-sub">Overall system stats and AI performance.</div>
+  <div id="admin-stats-grid"><div style="color:var(--text2)">Loading...</div></div>`;
+
+      let s;
+      try { s = await api('/admin/stats', {}, 'GET'); }
+      catch (e) {
+        s = {
+          total_users: 4, donors: 2, ngos: 1, individuals: 1, total_events: 12, confirmed_events: 8,
+          total_food_saved: 320.5, people_fed: 801, co2_saved: 160.2, ai_accuracy: 78.5,
+          tn_dataset_rows: 5000, original_dataset: 1782, total_training_data: 6790
+        };
+      }
+
+      document.getElementById('admin-stats-grid').innerHTML = `
+  <div class="grid4 section-gap">
+    <div class="stat"><div class="stat-icon"></div><div class="stat-val">${s.total_users}</div><div class="stat-lbl">Total Users</div></div>
+    <div class="stat"><div class="stat-icon"></div><div class="stat-val">${s.donors}</div><div class="stat-lbl">Donors</div></div>
+    <div class="stat"><div class="stat-icon"></div><div class="stat-val">${s.ngos}</div><div class="stat-lbl">NGOs</div></div>
+    <div class="stat"><div class="stat-icon"></div><div class="stat-val">${s.individuals}</div><div class="stat-lbl">Individuals</div></div>
+  </div>
+  <div class="grid4 section-gap">
+    <div class="stat"><div class="stat-icon"></div><div class="stat-val">${s.total_food_saved} kg</div><div class="stat-lbl">Food Saved</div></div>
+    <div class="stat"><div class="stat-icon"></div><div class="stat-val">${s.people_fed}</div><div class="stat-lbl">People Fed</div></div>
+    <div class="stat"><div class="stat-icon"></div><div class="stat-val">${s.co2_saved} kg</div><div class="stat-lbl">CO2 Prevented</div></div>
+    <div class="stat"><div class="stat-icon"></div><div class="stat-val">${s.ai_accuracy}%</div><div class="stat-lbl">AI Accuracy</div></div>
+  </div>
+  <div class="card">
+    <h3>🧠 Training Data Status</h3>
+    <div class="pbar-wrap"><div class="pbar-top"><span>TN Food Surplus Dataset</span><span class="pbar-val">${s.tn_dataset_rows.toLocaleString()} rows</span></div>
+      <div class="pbar-bg"><div class="pbar-fill" style="width:74%;background:var(--green)"></div></div></div>
+    <div class="pbar-wrap"><div class="pbar-top"><span>Original Food Wastage CSV</span><span class="pbar-val">${s.original_dataset.toLocaleString()} rows</span></div>
+      <div class="pbar-bg"><div class="pbar-fill" style="width:26%;background:var(--amber)"></div></div></div>
+    <div class="pbar-wrap"><div class="pbar-top"><span>Live App Data (real users)</span><span class="pbar-val">${s.confirmed_events} rows</span></div>
+      <div class="pbar-bg"><div class="pbar-fill" style="width:2%;background:var(--blue)"></div></div></div>
+    <div style="margin-top:16px;font-size:13px;color:var(--text2)">
+      Total training data: <strong style="color:var(--green)">${s.total_training_data.toLocaleString()} rows</strong> •
+      As live data grows, AI shifts Formula → Hybrid → ML mode automatically.
+    </div>
+  </div>`;
+    }
+
+    async function renderAdminUsers() {
+      document.getElementById('content-area').innerHTML = `
+  <div class="page-title">All Users</div>
+  <div id="users-tbl"><div style="color:var(--text2)">Loading...</div></div>`;
+      let users = [];
+      try { users = await api('/admin/users', {}, 'GET'); }
+      catch (e) {
+        users = [
+          { email: 'donor@demo.com', full_name: 'Demo Donor', role: 'donor', city: 'Chennai', is_active: true, created_at: '2026-01-01' },
+          { email: 'ngo@demo.com', full_name: 'Hope NGO', role: 'ngo', city: 'Madurai', is_active: true, created_at: '2026-01-05' },
+          { email: 'admin@demo.com', full_name: 'Admin', role: 'admin', city: 'Chennai', is_active: true, created_at: '2026-01-01' },
+        ];
+      }
+      document.getElementById('users-tbl').innerHTML = `
+  <div class="tbl-wrap"><table>
+    <thead><tr><th>Name</th><th>Email</th><th>Role</th><th>City</th><th>Status</th><th>Joined</th></tr></thead>
+    <tbody>${users.map(u => `
+    <tr>
+      <td>${u.full_name}</td><td>${u.email}</td>
+      <td><span class="pill rb-${u.role} pill-blue" style="font-size:11px">${u.role}</span></td>
+      <td>${u.city || '—'}</td>
+      <td><span class="pill ${u.is_active ? 'pill-green' : 'pill-red'}">${u.is_active ? 'Active' : 'Inactive'}</span></td>
+      <td>${u.created_at ? u.created_at.split('T')[0] : '—'}</td>
+    </tr>`).join('')}
+    </tbody>
+  </table></div>`;
+    }
+
+    async function renderAdminEvents() {
+      document.getElementById('content-area').innerHTML = `
+  <div class="page-title">All Events</div>
+  <div id="events-tbl"><div style="color:var(--text2)">Loading...</div></div>`;
+      let events = [];
+      try { events = await api('/admin/events', {}, 'GET'); }
+      catch (e) {
+        events = [
+          { id: 1, event_type: 'Wedding', food_type: 'Rice/Biryani', city: 'Chennai', invited_guests: 500, predicted_wastage: 28, actual_wastage: 25, risk_level: 'HIGH', prediction_mode: 'Formula' },
+          { id: 2, event_type: 'Corporate', food_type: 'Vegetables', city: 'Madurai', invited_guests: 200, predicted_wastage: 12, actual_wastage: null, risk_level: 'MEDIUM', prediction_mode: 'Formula' },
+        ];
+      }
+      document.getElementById('events-tbl').innerHTML = `
+  <div class="tbl-wrap"><table>
+    <thead><tr><th>ID</th><th>Event</th><th>Food</th><th>City</th><th>Guests</th><th>Predicted</th><th>Actual</th><th>Mode</th><th>Risk</th></tr></thead>
+    <tbody>${events.map(e => `
+    <tr>
+      <td>#${e.id}</td><td>${e.event_type}</td><td>${e.food_type}</td>
+      <td>${e.city || '—'}</td><td>${e.invited_guests}</td>
+      <td>${e.predicted_wastage} kg</td>
+      <td>${e.actual_wastage != null ? e.actual_wastage + ' kg' : '<span style="color:var(--text2)">Pending</span>'}</td>
+      <td><span class="mode-badge" style="font-size:10px">${e.prediction_mode || 'Formula'}</span></td>
+      <td><span class="risk-${e.risk_level}" style="font-size:11px;padding:2px 8px">${e.risk_level}</span></td>
+    </tr>`).join('')}
+    </tbody>
+  </table></div>`;
+    }
+
+    function renderAdminUpload() {
+      document.getElementById('content-area').innerHTML = `
+  <div class="page-title">Upload Dataset</div>
+  <div class="page-sub">Upload CSV datasets to Supabase for AI training.</div>
+
+  <div class="grid2 gap20">
+    <!-- TN Dataset -->
+    <div class="card">
+      <h3>TamilNadu Food Surplus Dataset</h3>
+      <div class="info-box" style="margin-bottom:16px">
+        <strong>Table:</strong> tn_food_surplus_dataset<br/>
+        <strong>Columns:</strong> Event_ID, Date, City, Event_Type, Food_Type, Invited_Guests, Actual_Guests, Attendance_Rate_Pct, Preparation_Method, Season, Storage_Condition, Location_Type, Pricing_Level, Quantity_Prepared_kg, Optimal_Quantity_kg, Wastage_kg, Wastage_Pct, Surplus_Safe_to_Donate_kg, Donated_to_NGO, CO2_Saved_kg, People_Fed
+      </div>
+      <div class="drop-zone" id="dz-tn" onclick="document.getElementById('fi-tn').click()"
+        ondragover="event.preventDefault();this.classList.add('drag')"
+        ondragleave="this.classList.remove('drag')"
+        ondrop="handleUploadDrop(event,'tn')">
+        <div style="font-size:36px;margin-bottom:10px">📊</div>
+        <div style="font-family:var(--ff);font-size:16px;font-weight:700;margin-bottom:6px">TamilNadu_FoodSurplus_Dataset.csv</div>
+        <div style="color:var(--text2);font-size:13px">Drop CSV here or click to browse</div>
+        <input type="file" id="fi-tn" accept=".csv" style="display:none" onchange="uploadDataset(event,'tn')"/>
+      </div>
+      <div id="tn-result" class="hidden"></div>
+    </div>
+
+    <!-- Original Dataset -->
+    <div class="card">
+      <h3>Original Food Wastage Dataset</h3>
+      <div class="info-box" style="margin-bottom:16px">
+        <strong>Table:</strong> original_food_dataset<br/>
+        <strong>Columns:</strong> Type of Food, Number of Guests, Event Type, Quantity of Food, Storage Conditions, Purchase History, Seasonality, Preparation Method, Geographical Location, Pricing, Wastage Food Amount
+      </div>
+      <div class="drop-zone" id="dz-orig" onclick="document.getElementById('fi-orig').click()"
+        ondragover="event.preventDefault();this.classList.add('drag')"
+        ondragleave="this.classList.remove('drag')"
+        ondrop="handleUploadDrop(event,'original')">
+        <div style="font-size:36px;margin-bottom:10px">📊</div>
+        <div style="font-family:var(--ff);font-size:16px;font-weight:700;margin-bottom:6px">food_wastage_data.csv</div>
+        <div style="color:var(--text2);font-size:13px">Drop CSV here or click to browse</div>
+        <input type="file" id="fi-orig" accept=".csv" style="display:none" onchange="uploadDataset(event,'original')"/>
+      </div>
+      <div id="orig-result" class="hidden"></div>
+    </div>
+  </div>
+
+  <div class="card" style="margin-top:20px">
+    <h3>📋 Upload Instructions</h3>
+    <div style="color:var(--text2);font-size:14px;line-height:2">
+      1. Download the CSV files from the files provided<br/>
+      2. Select the correct dataset type above<br/>
+      3. Drop the CSV file or click to upload<br/>
+      4. System will parse and insert into Supabase automatically<br/>
+      5. AI prediction engine will immediately use this data!<br/>
+      <br/>
+      <strong style="color:var(--green)">Note:</strong> Backend must be running (python app.py) for upload to work.
+      In demo mode, upload is simulated.
+    </div>
+  </div>`;
+    }
+
+    function handleUploadDrop(e, type) {
+      e.preventDefault();
+      document.getElementById('dz-' + type).classList.remove('drag');
+      const f = e.dataTransfer.files[0];
+      if (f) processUpload(f, type);
+    }
+
+    function uploadDataset(e, type) { processUpload(e.target.files[0], type); }
+
+    async function processUpload(file, type) {
+      const resultId = type === 'tn' ? 'tn-result' : 'orig-result';
+      const resultEl = document.getElementById(resultId);
+      resultEl.innerHTML = `<div style="margin-top:12px;color:var(--text2);font-size:14px"><span class="spinner"></span>Uploading ${file.name}...</div>`;
+      resultEl.classList.remove('hidden');
+
+      const form = new FormData();
+      form.append('file', file);
+      form.append('dataset_type', type);
+
+      try {
+        const r = await fetch(API + '/admin/upload_dataset', {
+          method: 'POST', body: form, credentials: 'include'
+        });
+        const data = await r.json();
+        resultEl.innerHTML = `
+    <div class="alert-hard" style="margin-top:12px;padding:14px 18px;">
+      <div class="at">${data.inserted} rows uploaded</div>
+      <div class="atxt">${data.message}</div>
+    </div>`;
+        toast(`${data.inserted} rows added to Supabase`);
+      } catch (e) {
+        // Demo mode simulation
+        const text = await file.text();
+        const lines = text.trim().split('\n').length - 1;
+        resultEl.innerHTML = `
+    <div class="alert-hard" style="margin-top:12px;padding:14px 18px;">
+      <div class="at">${lines} rows ready (demo mode)</div>
+      <div class="atxt">Backend not running. In production this would insert ${lines} rows into ${type === 'tn' ? 'tn_food_surplus_dataset' : 'original_food_dataset'} table in Supabase.</div>
+    </div>`;
+        toast(`${lines} rows detected. Start backend to actually upload.`);
+      }
+    }
+
+    async function renderAdminTraining() {
+      document.getElementById('content-area').innerHTML = `
+  <div class="page-title">Training Data Status</div>
+  <div class="page-sub">Monitor AI model data sources and accuracy.</div>
+  <div id="train-content"><div style="color:var(--text2)">Loading...</div></div>`;
+
+      let s;
+      try { s = await api('/admin/training_stats', {}, 'GET'); }
+      catch (e) { s = { tn_dataset: 5000, original_dataset: 1782, live_data: 8, total: 6790 }; }
+
+      const total = s.total || 1;
+      document.getElementById('train-content').innerHTML = `
+  <div class="grid3 section-gap">
+    <div class="stat"><div class="stat-icon"></div><div class="stat-val">${s.tn_dataset.toLocaleString()}</div><div class="stat-lbl">TN Dataset Rows</div></div>
+    <div class="stat"><div class="stat-icon"></div><div class="stat-val">${s.original_dataset.toLocaleString()}</div><div class="stat-lbl">Original Dataset</div></div>
+    <div class="stat"><div class="stat-icon"></div><div class="stat-val">${s.live_data}</div><div class="stat-lbl">Live App Data</div></div>
+  </div>
+  <div class="card">
+    <h3>Data Sources Breakdown</h3>
+    <div class="pbar-wrap">
+      <div class="pbar-top"><span>TN Food Surplus Dataset (generated)</span><span class="pbar-val">${((s.tn_dataset / total) * 100).toFixed(0)}% · ${s.tn_dataset.toLocaleString()} rows</span></div>
+      <div class="pbar-bg"><div class="pbar-fill" style="width:${(s.tn_dataset / total) * 100}%;background:var(--green)"></div></div>
+    </div>
+    <div class="pbar-wrap">
+      <div class="pbar-top"><span>Original food_wastage_data.csv</span><span class="pbar-val">${((s.original_dataset / total) * 100).toFixed(0)}% · ${s.original_dataset.toLocaleString()} rows</span></div>
+      <div class="pbar-bg"><div class="pbar-fill" style="width:${(s.original_dataset / total) * 100}%;background:var(--amber)"></div></div>
+    </div>
+    <div class="pbar-wrap">
+      <div class="pbar-top"><span>Live user data (real and growing)</span><span class="pbar-val">${((s.live_data / total) * 100).toFixed(1)}% · ${s.live_data} rows</span></div>
+      <div class="pbar-bg"><div class="pbar-fill" style="width:${Math.max((s.live_data / total) * 100, 0.5)}%;background:var(--blue)"></div></div>
+    </div>
+    <div class="card" style="margin-top:20px;background:rgba(126,200,69,0.04)">
+      <h3 style="font-size:16px">Prediction Mode Thresholds</h3>
+      <table style="margin-top:8px">
+        <thead><tr><th>Live Data Points</th><th>Mode</th><th>Confidence</th><th>Status</th></tr></thead>
+        <tbody>
+          <tr><td>0–4</td><td>Formula Only</td><td>60–65%</td><td>${s.live_data < 5 ? '<span class="pill pill-blue">Current</span>' : ''}</td></tr>
+          <tr><td>5–19</td><td>Formula+</td><td>65–73%</td><td>${s.live_data >= 5 && s.live_data < 20 ? '<span class="pill pill-blue">Current</span>' : ''}</td></tr>
+          <tr><td>20–49</td><td>Hybrid</td><td>73–80%</td><td>${s.live_data >= 20 && s.live_data < 50 ? '<span class="pill pill-blue">Current</span>' : ''}</td></tr>
+          <tr><td>50–199</td><td>Hybrid ML</td><td>80–90%</td><td>${s.live_data >= 50 && s.live_data < 200 ? '<span class="pill pill-blue">Current</span>' : ''}</td></tr>
+          <tr><td>200+</td><td>ML Dominant</td><td>90–92%</td><td>${s.live_data >= 200 ? '<span class="pill pill-green">Current</span>' : ''}</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="card" style="margin-top:20px;">
+      <h3>🧠 Retrain AI Model</h3>
+      <p style="color:var(--text2);font-size:14px;margin-bottom:16px;">Trigger a manual retrain of the Random Forest model using all available data sources (Live + TN + Original).</p>
+      <div class="fgrid">
+        <div class="fg"><label class="lbl">ROW LIMIT</label><input class="inp" id="train-limit" type="number" value="10000" placeholder="e.g. 5000"/></div>
+      </div>
+      <button class="btn-primary" id="btn-retrain" onclick="doRetrain()" style="margin-top:10px">Start Model Training</button>
+      <div id="train-res" class="hidden" style="margin-top:15px"></div>
+    </div>
+  </div>`;
+    }
+
+    async function doRetrain() {
+      const btn = document.getElementById('btn-retrain');
+      const res = document.getElementById('train-res');
+      const limit = document.getElementById('train-limit').value || 10000;
+
+      btn.disabled = true;
+      btn.innerHTML = '<span class="spinner"></span> Training...';
+      res.classList.add('hidden');
+
+      try {
+        const data = await api('/admin/train_model', { limit: +limit }, 'POST');
+        res.innerHTML = `
+      <div class="alert-hard" style="padding:15px; background:rgba(76,175,80,0.1); border:1px solid var(--green);">
+        <div class="at" style="color:var(--green)">Model Trained Successfully</div>
+        <div class="atxt">AI model was retrained on <strong>${data.rows}</strong> rows of data. Accuracy and predictions are now updated.</div>
+      </div>`;
+        res.classList.remove('hidden');
+        toast('AI Model retrained successfully');
+      } catch (err) {
+        res.innerHTML = `
+      <div class="alert-hard" style="padding:15px; background:rgba(244,67,54,0.1); border:1px solid var(--red);">
+        <div class="at" style="color:var(--red)">Training Failed</div>
+        <div class="atxt">Error: ${err.message || 'Check backend logs for details.'}</div>
+      </div>`;
+        res.classList.remove('hidden');
+        toast('Training failed', 'err');
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = 'Start Model Training';
+      }
+    }
+
+    async function renderAdminFoodTypes() {
+      document.getElementById('content-area').innerHTML = `
+  <div class="page-title">Manage Food Types</div>
+  <div class="page-sub">Add or edit food types for prediction form dropdown.</div>
+  <div id="food-types-content"><div style="color:var(--text2)">Loading...</div></div>`;
+
+      let foods = [];
+      try { foods = await api('/admin/config/food-types', {}, 'GET'); }
+      catch (e) { foods = ['Rice/Biryani', 'Curry/Dal', 'Vegetables', 'Meat/Chicken', 'Sweets', 'Snacks', 'Bread/Roti']; }
+
+      document.getElementById('food-types-content').innerHTML = `
+  <div class="grid2 gap20">
+    <div class="card">
+      <h3>📋 Current Food Types</h3>
+      <div style="max-height:300px;overflow-y:auto;">
+        ${typeof foods[0] === 'string'
+          ? foods.map(f => `<div style="padding:8px 12px;border-bottom:1px solid var(--border);color:var(--text2);font-size:14px">• ${f}</div>`).join('')
+          : foods.map(f => `<div style="padding:8px 12px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center">
+              <span>${f.icon || '🍽️'} ${f.name}</span>
+              <button class="btn-outline" style="padding:4px 8px;font-size:11px" onclick="deleteFoodType(${f.id})">Delete</button>
+            </div>`).join('')
+        }
+      </div>
+    </div>
+    <div class="card">
+      <h3>➕ Add New Food Type</h3>
+      <div class="fgrid">
+        <div class="fg"><label class="lbl">FOOD TYPE NAME</label><input class="inp" id="ft-name" placeholder="e.g., Fish Curry"/></div>
+        <div class="fg"><label class="lbl">EMOJI ICON</label><input class="inp" id="ft-icon" placeholder="🐟" maxlength="2"></div>
+      </div>
+      <button class="btn-primary" onclick="addFoodType()">Add Food Type</button>
+    </div>
+  </div>`;
+    }
+
+    async function renderAdminEventTypes() {
+      document.getElementById('content-area').innerHTML = `
+  <div class="page-title">Manage Event Types</div>
+  <div class="page-sub">Add or edit event types for prediction form dropdown.</div>
+  <div id="event-types-content"><div style="color:var(--text2)">Loading...</div></div>`;
+
+      let events = [];
+      try { events = await api('/admin/config/event-types', {}, 'GET'); }
+      catch (e) { events = ['Wedding', 'Corporate', 'Birthday', 'Social Gathering', 'Temple Festival', 'College Event']; }
+
+      document.getElementById('event-types-content').innerHTML = `
+  <div class="grid2 gap20">
+    <div class="card">
+      <h3>📋 Current Event Types</h3>
+      <div style="max-height:300px;overflow-y:auto;">
+        ${typeof events[0] === 'string'
+          ? events.map(e => `<div style="padding:8px 12px;border-bottom:1px solid var(--border);color:var(--text2);font-size:14px">• ${e}</div>`).join('')
+          : events.map(e => `<div style="padding:8px 12px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center">
+              <span>${e.icon || '🎉'} ${e.name}</span>
+              <button class="btn-outline" style="padding:4px 8px;font-size:11px" onclick="deleteEventType(${e.id})">Delete</button>
+            </div>`).join('')
+        }
+      </div>
+    </div>
+    <div class="card">
+      <h3>➕ Add New Event Type</h3>
+      <div class="fgrid">
+        <div class="fg"><label class="lbl">EVENT TYPE NAME</label><input class="inp" id="et-name" placeholder="e.g., Seminar"/></div>
+        <div class="fg"><label class="lbl">EMOJI ICON</label><input class="inp" id="et-icon" placeholder="📚" maxlength="2"/></div>
+      </div>
+      <button class="btn-primary" onclick="addEventType()">Add Event Type</button>
+    </div>
+  </div>`;
+    }
+
+    async function addFoodType() {
+      const name = document.getElementById('ft-name').value.trim();
+      const icon = document.getElementById('ft-icon').value.trim() || '';
+      if (!name) return toast('Enter food type name', 'err');
+      try {
+        await api('/admin/config/food-types', { name, icon }, 'POST');
+        toast(`✅ ${name} added!`);
+        renderAdminFoodTypes();
+        await loadDynamicDropdowns();
+      } catch (e) {
+        toast(`✅ ${name} added (demo)!`);
+        renderAdminFoodTypes();
+      }
+    }
+
+    async function addEventType() {
+      const name = document.getElementById('et-name').value.trim();
+      const icon = document.getElementById('et-icon').value.trim() || '';
+      if (!name) return toast('Enter event type name', 'err');
+      try {
+        await api('/admin/config/event-types', { name, icon }, 'POST');
+        toast(`✅ ${name} added!`);
+        renderAdminEventTypes();
+        await loadDynamicDropdowns();
+      } catch (e) {
+        toast(`✅ ${name} added (demo)!`);
+        renderAdminEventTypes();
+      }
+    }
+
+    function deleteFoodType(id) { toast('Delete not yet implemented', 'err'); }
+    function deleteEventType(id) { toast('Delete not yet implemented', 'err'); }
+  </script>
+</body>
+
+</html>

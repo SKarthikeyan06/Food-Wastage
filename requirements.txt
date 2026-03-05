@@ -1,0 +1,12 @@
+# Web Framework and Networking
+Flask
+Flask-Cors
+requests
+
+# Data Science and Machine Learning
+pandas
+numpy
+scikit-learn
+
+# Utilities
+gunicorn
