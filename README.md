@@ -1,71 +1,43 @@
 # FoodBridge AI v2 🍲
 
-FoodBridge AI is a high-performance Flask-based web application designed to combat food waste in the catering and hospitality industry. It uses a **Hybrid Prediction Engine** that blends scientific formulas, Machine Learning (Random Forest), and Generative AI (Google Gemini) to predict food wastage and coordinate surplus donations to NGOs.
+FoodBridge AI is a comprehensive Flask-based backend designed to minimize food waste at large events. It utilizes a **Hybrid Prediction Engine** that combines mathematical formulas, historical data, and AI to provide donors with precise preparation quantities.
 
 ## 🚀 Key Features
 
-* **Hybrid Prediction Engine:** * *Formula Mode:* Uses ICMR per-capita standards and research-based waste factors.
-    * *ML Mode:* A Scikit-Learn Random Forest Regressor trained on 6,000+ historical data points.
-    * *Gemini AI Fallback:* Leverages `gemini-2.0-flash` for high-reasoning predictions when data confidence is low.
-* **Role-Based Access Control:** Custom dashboards for **Donors** (Caterers/Hotels), **NGOs**, **Individuals**, and **Admins**.
-* **Real-time Alerts:** * *Soft Alerts:* Notifies NGOs to be on standby based on predictions.
-    * *Hard Alerts:* Instant "Pick up now" notifications once surplus is confirmed.
-* **SOS Roadside Reporting:** A public, no-login-required feature to report needy individuals or orphans to the nearest NGOs.
-* **Database Integration:** Fully integrated with **Supabase (PostgreSQL)** for persistence and AI training data.
-* **Impact Tracking:** Visualizes CO2 prevention, people fed, and food saved metrics.
+* **Role-Based Access:** Specialized dashboards for Donors, NGOs, Individuals, and Admins.
+* **Hybrid AI Engine:** Predicts wastage using a blend of ICMR standards, Random Forest regression, and Gemini AI fallbacks.
+* **NGO Matching:** Automatically calculates distances using the Haversine formula to find the nearest NGOs for surplus pickup.
+* **Roadside SOS:** Allows guest users to report needy individuals on the roadside, instantly alerting local NGOs.
+* **Data-Driven Accuracy:** As more "Actual Wastage" data is confirmed in the database, the system shifts from formula-based to ML-dominant predictions.
 
-## 🛠️ Tech Stack
+## 🛠️ Internal Configuration
 
--   **Backend:** Python / Flask
--   **Frontend:** HTML5, CSS3 (Syne & DM Sans typography), Vanilla JavaScript
--   **Database:** Supabase (REST API)
--   **AI/ML:** Scikit-Learn (Random Forest), Google Gemini API
--   **Geospatial:** Haversine formula for NGO-Donor distance mapping
+This project is configured for ease of deployment without external environment variables. 
 
-## 📦 Installation & Setup
+* **Supabase:** The REST API URL and Service Key are declared directly within `app.py`.
+* **Gemini AI:** The API key for fallback predictions is integrated within the prediction logic.
 
-1.  **Clone the repository:**
-    ```bash
-    git clone [https://github.com/your-repo/foodbridge-ai.git](https://github.com/your-repo/foodbridge-ai.git)
-    cd foodbridge-ai
-    ```
+## 📦 Getting Started
 
-2.  **Install dependencies:**
+1.  **Install Dependencies:**
     ```bash
     pip install -r requirements.txt
     ```
 
-3.  **Environment Configuration:**
-    The application is currently configured with Supabase credentials inside `app.py`. For production, it is recommended to move these to a `.env` file:
-    - `SUPABASE_URL`
-    - `SUPABASE_KEY`
-    - `GEMINI_API_KEY`
-
-4.  **Run the application:**
+2.  **Run the Server:**
     ```bash
     python app.py
     ```
-    The app will be available at `http://localhost:5000`.
+    The application will start on `http://localhost:5000`.
 
-## 🧪 Admin & Testing
+3.  **Access the Dashboard:**
+    Open `index.html` in your browser or serve it through the Flask root.
 
-* **Demo Accounts:**
-    * **Donor:** `donor@demo.com` | `demo123`
-    * **NGO:** `ngo@demo.com` | `demo123`
-    * **Admin:** `admin@demo.com` | `demo123`
-* **Training Data:** Admins can upload CSV datasets (Tamil Nadu Food Surplus or Original Food Waste data) via the Admin Dashboard to retrain the ML model.
+## 🧪 Admin Capabilities
 
-## 📊 Prediction Logic
-The system calculates the **Optimal Quantity** using the following formula:
-$$Optimal = (Guests \times AttendanceRate \times PerCapitaConsumption) \times Buffer$$
-
-It then applies a **Wastage Factor ($W_f$)**:
-$$W_f = BaseWaste \times MethodMultiplier \times PricingMultiplier \times SeasonMultiplier$$
-
-The ML model then refines this result based on historical $ActualWastage$ patterns stored in the database.
-
-## 🤝 Contributing
-Contributions are welcome! Please fork the repository and submit a pull request for any feature enhancements.
+* **Training:** Admins can trigger model retraining directly from the dashboard.
+* **Data Upload:** Support for uploading CSV datasets (like the Tamil Nadu Food Surplus dataset) to improve model accuracy.
+* **User Management:** View and manage all registered donors and NGOs.
 
 ---
-*Developed to bridge the gap between surplus and scarcity.*
+**Note:** For production environments, ensure the hardcoded API keys are secured or restricted within your provider's console.
