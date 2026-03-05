@@ -1,8 +1,8 @@
-# FoodBridge AI v2 🍲
+# FoodBridge AI
 
 FoodBridge AI is a comprehensive Flask-based backend designed to minimize food waste at large events. It utilizes a **Hybrid Prediction Engine** that combines mathematical formulas, historical data, and AI to provide donors with precise preparation quantities.
 
-## 🚀 Key Features
+## Key Features
 
 * **Role-Based Access:** Specialized dashboards for Donors, NGOs, Individuals, and Admins.
 * **Hybrid AI Engine:** Predicts wastage using a blend of ICMR standards, Random Forest regression, and Gemini AI fallbacks.
@@ -10,14 +10,14 @@ FoodBridge AI is a comprehensive Flask-based backend designed to minimize food w
 * **Roadside SOS:** Allows guest users to report needy individuals on the roadside, instantly alerting local NGOs.
 * **Data-Driven Accuracy:** As more "Actual Wastage" data is confirmed in the database, the system shifts from formula-based to ML-dominant predictions.
 
-## 🛠️ Internal Configuration
+## Internal Configuration
 
 This project is configured for ease of deployment without external environment variables. 
 
 * **Supabase:** The REST API URL and Service Key are declared directly within `app.py`.
 * **Gemini AI:** The API key for fallback predictions is integrated within the prediction logic.
 
-## 📦 Getting Started
+## Getting Started
 
 1.  **Install Dependencies:**
     ```bash
@@ -33,7 +33,7 @@ This project is configured for ease of deployment without external environment v
 3.  **Access the Dashboard:**
     Open `index.html` in your browser or serve it through the Flask root.
 
-## 🧪 Admin Capabilities
+## Admin Capabilities
 
 * **Training:** Admins can trigger model retraining directly from the dashboard.
 * **Data Upload:** Support for uploading CSV datasets (like the Tamil Nadu Food Surplus dataset) to improve model accuracy.
