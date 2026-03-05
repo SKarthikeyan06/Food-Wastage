@@ -1435,7 +1435,8 @@
         const r = await api('/login', { email, password: pass });
         if (r.error) { toast(r.error, 'err'); }
         else { currentUser = r.user; initApp(); }
-      } catch (e) { toast('Backend not running - using demo mode', 'err'); demoLogin(email); }
+      } catch (e) { toast('Backend not running - using demo mode', 'err'); //demoLogin(email); Console.log(e);
+                  }
       btn.innerHTML = 'Login'; btn.disabled = false;
     }
 
