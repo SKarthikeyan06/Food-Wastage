@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1.0" />
-  <title>FoodBridge AI v2</title>
+  <title>FoodBridge AI</title>
   <link
     href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap"
     rel="stylesheet" />
@@ -1328,17 +1328,17 @@
 
         <!-- ── REPORT NEEDY PERSON (No Login Required) ── -->
         <div class="needy-alert-panel">
-          <div class="needy-title">🆘 Spotted Someone in Need?</div>
+          <div class="needy-title">Spotted Someone in Need?</div>
           <div class="needy-sub">Report a needy person or orphan on the roadside — we'll alert the nearest NGOs
             instantly. <strong>No login needed.</strong></div>
           <div class="needy-fields">
-            <input id="rn-location" placeholder="📍 Location / Landmark (e.g. Opposite Central Station)" />
-            <input id="rn-city" placeholder="🏙️ City (e.g. Chennai)" />
+            <input id="rn-location" placeholder="Location / Landmark (e.g. Opposite Central Station)" />
+            <input id="rn-city" placeholder="City (e.g. Chennai)" />
             <textarea id="rn-desc" rows="2"
-              placeholder="📝 Describe the situation (age, condition, number of people...)"></textarea>
-            <input id="rn-contact" placeholder="📞 Your phone (optional, for NGO follow-up)" />
+              placeholder="Describe the situation (age, condition, number of people...)"></textarea>
+            <input id="rn-contact" placeholder="Your phone (optional, for NGO follow-up)" />
           </div>
-          <button class="btn-sos" id="rn-btn" onclick="doReportNeedy()">🆘 Send Alert to Nearest NGOs</button>
+          <button class="btn-sos" id="rn-btn" onclick="doReportNeedy()">Send Alert to Nearest NGOs</button>
           <div id="rn-result" style="margin-top:12px;display:none"></div>
         </div>
 
@@ -1408,7 +1408,7 @@
     // ── SUPABASE CONFIG (inline - no .env needed) ──
     const SUPABASE_URL = 'https://lrcemdihdncmtfxqqgew.supabase.co';
     const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxyY2VtZGloZG5jbXRmeHFxZ2V3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzA4NjE1MTQsImV4cCI6MjA4NjQzNzUxNH0.NmiOJZCvx0gvM7X5hJJoiaIrjK4OxmJDolZY93uSXkA';
-    const API = 'https://food-wastage.onrender.com/api';
+    const API = 'http://localhost:5000/api';
     let currentUser = null;
     let currentSection = '';
 
@@ -1545,7 +1545,7 @@
       // Initialize notifications (polling + admin send UI)
       initNotifications();
       // Default section by role
-      const defaults = { donor: 'predict', ngo: 'alerts', individual: 'explore', admin: 'admin-dash', guest: 'alerts' };
+      const defaults = { donor: 'predict', ngo: 'alerts', individual: 'explore', admin: 'admin-dash', guest: 'predict' };
       showSection(defaults[role] || 'predict');
     }
 
@@ -1610,6 +1610,7 @@
           { icon: '', label: 'Nearest NGOs', id: 'nearest-ngos' },
         ],
         guest: [
+          { icon: '', label: 'AI Prediction', id: 'predict' },
           { icon: '', label: 'Live Alerts', id: 'alerts' },
           { icon: '', label: 'Share Feedback', id: 'guest-feedback' },
           { icon: '', label: 'Nearest NGOs', id: 'nearest-ngos' },
@@ -1638,24 +1639,11 @@
     </div>`;
     }
 
-    function toggleSidebar() {
-      const sb = document.getElementById('sidebar');
-      const overlay = document.getElementById('sidebar-overlay');
-      if (sb) sb.classList.toggle('open');
-      if (overlay) overlay.classList.toggle('open');
-    }
-
     function showSection(id) {
       currentSection = id;
       document.querySelectorAll('.sidebar-btn').forEach(b => b.classList.remove('active'));
       const sb = document.getElementById('sb-' + id);
       if (sb) sb.classList.add('active');
-
-      const sidebar = document.getElementById('sidebar');
-      const overlay = document.getElementById('sidebar-overlay');
-      if (sidebar) sidebar.classList.remove('open');
-      if (overlay) overlay.classList.remove('open');
-
       const fn = {
         'predict': renderPredict,
         'confirm': renderConfirm,
