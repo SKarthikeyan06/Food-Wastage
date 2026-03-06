@@ -642,6 +642,26 @@ def register():
                 session["user_id"]   = user["id"]
                 session["user_role"] = user["role"]
                 session["user_name"] = user["full_name"]
+                
+                # Automatically create NGO profile
+                if user["role"] == "ngo":
+                    try:
+                        ngo_data = {
+                            "user_id":    clean_uuid(user["id"]),
+                            "name":       user.get("organization") or user["full_name"],
+                            "contact":    user["full_name"],
+                            "phone":      user.get("phone", ""),
+                            "email":      user["email"],
+                            "city":       user.get("city", ""),
+                            "area":       "",
+                            "capacity_kg": 50.0,
+                            "food_types": "all",
+                            "hours":      "8 AM - 8 PM",
+                        }
+                        db_request("POST", "ngos", data=ngo_data)
+                    except Exception as ngo_err:
+                        print(f"[REGISTER] Failed to auto-create NGO profile: {ngo_err}")
+                
                 return jsonify({"status":"registered","user": {
                     "id": user["id"], "name": user["full_name"],
                     "role": user["role"], "email": user["email"]
@@ -1112,6 +1132,25 @@ def guest_feedback():
         res = db_request("POST", "guest_feedback", data=feedback_data)
         if res and len(res) > 0:
             saved_id = res[0].get("id")
+            
+        # Create a notification based on the type
+        fb_type = d.get("type", "guest")
+        city = d.get("city", "")
+        contact = d.get("contact", "")
+        name = d.get("name", "Guest")
+        
+        notif_msg = f"{message}\nFrom: {name}" + (f" ({contact})" if contact else "") + (f", City: {city}" if city else "")
+        
+        notif_data = {
+            "title":      "Guest Surplus Alert" if fb_type == "alert" else "New Guest Feedback",
+            "message":    notif_msg,
+            "to_role":    "ngo" if fb_type == "alert" else "admin",
+            "to_user":    None,
+            "is_read":    False,
+            "created_at": datetime.utcnow().isoformat(),
+        }
+        db_request("POST", "notifications", data=notif_data)
+            
     except Exception as e:
         print(f"Guest feedback save error: {e}")
         return jsonify({"error": str(e)}), 500
