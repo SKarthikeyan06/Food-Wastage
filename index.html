@@ -1180,11 +1180,20 @@
       }
 
       .nav-right {
-        gap: 10px;
+        gap: 8px;
       }
 
       .nav-name {
         display: none;
+      }
+
+      .role-badge {
+        display: none;
+      }
+
+      .btn-sm {
+        padding: 6px 12px;
+        font-size: 12px;
       }
 
       .auth-box {
@@ -1468,7 +1477,15 @@
       try {
         const r = await api('/register', d);
         if (r.error) toast(r.error, 'err');
-        else { currentUser = r.user; initApp(); toast('Account created! Welcome'); }
+        else {
+          currentUser = r.user;
+          initApp();
+          if (r.status && r.status.includes('demo')) {
+            toast('Registered in DEMO MODE (Local only, DB disconnected)', 'err');
+          } else {
+            toast('Account created! Welcome');
+          }
+        }
       } catch (e) {
         currentUser = { id: 'new1', name: d.full_name, role: d.role, email: d.email };
         initApp(); toast('Registered (demo mode)');
@@ -1669,9 +1686,33 @@
       }[id];
       if (fn) fn();
       else document.getElementById('content-area').innerHTML = `<div class="page-title">Coming Soon</div>`;
+
+      // Close sidebar on mobile after clicking
+      const sidebar = document.getElementById('sidebar');
+      const overlay = document.getElementById('sidebar-overlay');
+      if (sidebar && sidebar.classList.contains('open')) {
+        sidebar.classList.remove('open');
+        overlay.classList.remove('open');
+      }
     }
 
     function goHome() { showSection(currentSection); }
+
+    function toggleSidebar() {
+      const sidebar = document.getElementById('sidebar');
+      const overlay = document.getElementById('sidebar-overlay');
+      if (sidebar && overlay) {
+        sidebar.classList.toggle('open');
+        overlay.classList.toggle('open');
+      }
+    }
+
+    window.addEventListener('beforeunload', function (e) {
+      if (currentUser) {
+        e.preventDefault();
+        e.returnValue = 'Are you sure you want to exit? Your session may be disconnected.';
+      }
+    });
 
     // ── API Helper ────────────────────────────────────────────
     async function api(path, body = {}, method = 'POST') {

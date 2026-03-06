@@ -1608,11 +1608,11 @@ def index():
     try:
         return send_from_directory('.', 'index.html')
     except Exception:
-        return jsonify({"message":"FoodBridge AI v2 Running","status":"ok"})
+        return jsonify({"message":"FoodBridge AI Running","status":"ok"})
 
 
 if __name__ == "__main__":
-    print("\nFoodBridge AI v2")
+    print("\nFoodBridge AI")
     print("http://localhost:5000")
     print("Demo accounts: donor@demo.com | ngo@demo.com | admin@demo.com | user@demo.com")
     print("Password for all: demo123")
